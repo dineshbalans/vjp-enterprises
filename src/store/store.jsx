@@ -3,6 +3,8 @@ import uiReducer from "./uiSlice";
 import productReducer from "./productSlice";
 import cartReducer from "./cartSlice";
 import userReducer from "./userSlice";
+import wishlistReducer from "./wishListSlice";
+import adminReducer from "./adminSlice";
 
 const store = configureStore({
   reducer: {
@@ -10,6 +12,8 @@ const store = configureStore({
     product: productReducer,
     cart: cartReducer,
     user: userReducer,
+    wishlist: wishlistReducer,
+    admin: adminReducer,
   },
 });
 

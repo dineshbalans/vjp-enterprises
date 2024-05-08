@@ -72,7 +72,7 @@ const ProductList = ({ productInfo, category, subCategory }) => {
                 <ProductItem
                   key={product.itemId}
                   category={category}
-                  {...product}
+                  product={product}
                 />
               ))}
           </ul>

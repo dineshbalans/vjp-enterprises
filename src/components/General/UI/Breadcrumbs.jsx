@@ -2,7 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { FaAngleRight } from "react-icons/fa6";
 
-const Breadcrumbs = ({ currentPage, style, bldInPdng = true }) => {
+const Breadcrumbs = ({
+  currentPage,
+  style,
+  bldInPdng = true,
+  group = "user",
+}) => {
   return (
     <div
       className={`${
@@ -10,7 +15,7 @@ const Breadcrumbs = ({ currentPage, style, bldInPdng = true }) => {
       } flex items-center gap-3 py-4 text-[15px] bg-[#F6F6F8] ${style}`}
     >
       <Link
-        to="/"
+        to={group === "user" ? "/" : "/admin"}
         className="text-gray-500 hover:underline transition-all ease-linear"
       >
         Home

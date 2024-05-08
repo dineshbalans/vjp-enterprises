@@ -89,7 +89,7 @@ const CheckOutPage = () => {
           </div>
         )}
         {/* CHECK OUT */}
-        {!cart.length === 0 ? (
+        {/* {!cart.length === 0 ? (
           <div className="w-full sml:w-1/2 mx-auto text-center mb-10">
             <img src={checkOut} alt="" className="w-[60%] mx-auto" />
             <h3 className="pb-10">
@@ -108,86 +108,86 @@ const CheckOutPage = () => {
               </button>
             </Link>
           </div>
-        ) : (
-          <div className="space-y-12 pt-5">
-            <div className="flex items-center justify-between">
-              <div className="lg:w-[63%] flex items-center">
-                <div
-                  className={`w-1/2 ${
-                    !isShippingCmplted ? "text-black" : "text-[#B09C99]"
-                  }`}
-                >
-                  <div className="relative">
-                    <hr
-                      className={`border-2  rounded-r-full ${
-                        !isShippingCmplted && "border-black"
-                      }`}
-                    />
-                    <div className="absolute inset-0 flex justify-center items-center">
-                      <div
-                        className={`w-9 h-9 border-2 rounded-full 
+        ) : ( */}
+        <div className="space-y-12 pt-5">
+          <div className="flex items-center justify-between">
+            <div className="lg:w-[63%] flex items-center">
+              <div
+                className={`w-1/2 ${
+                  !isShippingCmplted ? "text-black" : "text-[#B09C99]"
+                }`}
+              >
+                <div className="relative">
+                  <hr
+                    className={`border-2  rounded-r-full ${
+                      !isShippingCmplted && "border-black"
+                    }`}
+                  />
+                  <div className="absolute inset-0 flex justify-center items-center">
+                    <div
+                      className={`w-9 h-9 border-2 rounded-full 
                         flex justify-center items-center bg-white ${
                           !isShippingCmplted && "border-black"
                         }`}
-                      >
-                        <GiCheckMark className="scale-75" />
-                      </div>
+                    >
+                      <GiCheckMark className="scale-75" />
                     </div>
                   </div>
-                  <h1 className="pt-6 text-center font-semibold text-sm">
-                    SHIPPING
-                  </h1>
                 </div>
-                <div
-                  className={`w-1/2 ${
-                    isShippingCmplted ? "text-black" : "text-[#B09C99]"
-                  }`}
-                >
-                  <div className="relative">
-                    <hr
-                      className={`border-2  rounded-r-full ${
-                        isShippingCmplted && "border-black"
-                      }`}
-                    />
-                    <div className="absolute inset-0 flex justify-center items-center">
-                      <div
-                        className={`w-9 h-9 border-2 rounded-full 
+                <h1 className="pt-6 text-center font-semibold text-sm">
+                  SHIPPING
+                </h1>
+              </div>
+              <div
+                className={`w-1/2 ${
+                  isShippingCmplted ? "text-black" : "text-[#B09C99]"
+                }`}
+              >
+                <div className="relative">
+                  <hr
+                    className={`border-2  rounded-r-full ${
+                      isShippingCmplted && "border-black"
+                    }`}
+                  />
+                  <div className="absolute inset-0 flex justify-center items-center">
+                    <div
+                      className={`w-9 h-9 border-2 rounded-full 
                         flex justify-center items-center bg-white ${
                           isShippingCmplted && "border-black"
                         }`}
-                      >
-                        {isShippingCmplted ? (
-                          <GiCheckMark className="scale-75" />
-                        ) : (
-                          <h1>2</h1>
-                        )}
-                      </div>
+                    >
+                      {isShippingCmplted ? (
+                        <GiCheckMark className="scale-75" />
+                      ) : (
+                        <h1>2</h1>
+                      )}
                     </div>
                   </div>
-                  <h1 className="pt-6 text-center font-semibold text-sm">
-                    REVIEW & PAYMENTS
-                  </h1>
                 </div>
+                <h1 className="pt-6 text-center font-semibold text-sm">
+                  REVIEW & PAYMENTS
+                </h1>
               </div>
-              {!isAuthenticated && (
-                <Link
-                  to="/account/sign-in"
-                  className="bg-ternary text-white font-medium w-1/6 py-3 rounded-full ml-auto flex"
-                >
-                  <span className="text-center w-full"> SIGN IN</span>
-                </Link>
-              )}
             </div>
-            <div className="flex flex-wrap lg:flex-nowrap lg:gap-8 min-h-[90vh]">
-              {isShippingCmplted ? (
-                <PaymentMethod {...{ setIsShippingCmplted }} />
-              ) : (
-                <CheckOutForm />
-              )}
-              <OrderSummary />
-            </div>
+            {!isAuthenticated && (
+              <Link
+                to="/account/sign-in"
+                className="bg-ternary text-white font-medium w-1/6 py-3 rounded-full ml-auto flex"
+              >
+                <span className="text-center w-full"> SIGN IN</span>
+              </Link>
+            )}
           </div>
-        )}
+          <div className="flex flex-wrap lg:flex-nowrap lg:gap-8 min-h-[90vh]">
+            {isShippingCmplted ? (
+              <PaymentMethod {...{ setIsShippingCmplted }} />
+            ) : (
+              <CheckOutForm />
+            )}
+            <OrderSummary />
+          </div>
+        </div>
+        {/* )} */}
       </div>
     </section>
   );

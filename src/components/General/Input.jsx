@@ -9,7 +9,7 @@ export const LabelText = ({
 }) => {
   return (
     <label
-      className={`${className} text-black flex items-center gap-1 pb-2 ${
+      className={` text-black flex items-center gap-1 pb-2 ${className} ${
         error && "text-red-500"
       }`}
       htmlFor={htmlFor}
@@ -33,7 +33,8 @@ const Input = ({
     <>
       <input
         type={type}
-        className={`${className} border px-3 py-3 focus:outline-dotted text-ternary w-full placeholder:text-gray-500 ${
+        className={`border px-3 py-3 focus:outline-dotted text-ternary w-full placeholder:text-gray-500
+        ${className} ${
           isError && "text-red-600 placeholder:text-red-600 border-red-600"
         }`}
         id={id}

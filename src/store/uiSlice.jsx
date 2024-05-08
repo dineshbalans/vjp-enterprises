@@ -3,12 +3,26 @@ import { createSlice } from "@reduxjs/toolkit";
 const uiSlice = createSlice({
   name: "ui",
   initialState: {
-    showMenuBar: false,
+    modal: {
+      wishListSignInModal: false,
+      productDetailModal: false,
+      product: {},
+    },
   },
   reducers: {
-    menuBarHanlder(state) {
-      document.body.style.overflow = state.showMenuBar ? "" : "hidden";
-      state.showMenuBar = !state.showMenuBar;
+    wishListSignInModalHandler(state) {
+      document.body.style.overflow = state.modal.wishListSignInModal
+        ? ""
+        : "hidden";
+      state.modal.wishListSignInModal = !state.modal.wishListSignInModal;
+    },
+
+    productDetailModalHandler(state, { payload = {} }) {
+      document.body.style.overflow = state.modal.productDetailModal
+        ? ""
+        : "hidden";
+      state.modal.product = payload;
+      state.modal.productDetailModal = !state.modal.productDetailModal;
     },
   },
 });

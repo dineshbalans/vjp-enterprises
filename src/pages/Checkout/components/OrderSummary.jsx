@@ -24,7 +24,7 @@ const OrderSummary = () => {
               key={id}
               className="flex justify-between p-4 items-center border-b"
             >
-              <img src={image[0]} alt="" className="w-1/6" />
+              <img src={image ? image[0] : ""} alt="" className="w-1/6" />
               <h3 className="text-xs w-1/2">{title}</h3>
               <h3 className="text-sm">{`x ${productQuantity}`}</h3>
               <h2 className="text-sm">{`₹${productQuantity * price}.00`}</h2>

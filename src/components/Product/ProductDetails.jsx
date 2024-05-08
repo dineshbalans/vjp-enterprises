@@ -7,8 +7,9 @@ import {
 } from "react-icons/lu";
 import productDetailSpecs from "../../assets/productDetailSpecs.png";
 import Breadcrumbs from "../General/UI/Breadcrumbs";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { cartActions } from "../../store/cartSlice";
+import { wishListActions } from "../../store/wishListSlice";
 
 const ProductDetails = ({
   product,
@@ -21,19 +22,27 @@ const ProductDetails = ({
   const [productQuantity, setProductQuantity] = useState(1);
   const [productImageIndex, setProductImageIndex] = useState(0);
 
+  const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
+  const wishListItems = useSelector((state) => state.wishlist.items);
+
+  const itemExistsInWishList = wishListItems.find(
+    (item) => item.itemId === product.itemId
+  );
+
   const addToCartHandler = () => {
     const price = product?.actualPrice;
     // const price = product?.discountPrice;
     // .replace(/,/g, "").slice(1);
-    const cartData = {
-      id: product?.itemId,
-      title: product?.itemTitle,
-      image: product?.itemImage,
-      price,
-      productQuantity,
-      category: product?.subCategory,
-    };
-    dispatch(cartActions.addProduct(cartData));
+    // console.log({...product,productQuantity});
+    // const cartData = {
+    //   itemId: product?.itemId,
+    //   itemTitle: product?.itemTitle,
+    //   itemImage: product?.itemImage,
+    //   price,
+    //   productQuantity,
+    //   category: product?.subCategory,
+    // };
+    dispatch(cartActions.addProduct({ ...product, productQuantity }));
     // console.log(cartData);
   };
 
@@ -47,7 +56,7 @@ const ProductDetails = ({
           ]}
         />
       )}
-      <section className="p-5 md:p-10  space-y-12 min-h-[80vh] ">
+      <section className="p-5 md:p-10 space-y-12">
         <div className="flex flex-wrap lg:flex-nowrap justify-between items-center gap-5">
           {/* <div className="sml:hidden pt-6 pb-3">
             <span className="text-gray-500 text-sm">
@@ -55,7 +64,7 @@ const ProductDetails = ({
               / {product?.itemTitle}
             </span>
           </div> */}
-          <div className="w-full lg:w-1/2 flex justify-center items-center relative h-[500px] p-1 gap-3">
+          <div className="w-full lg:w-1/2 flex relative gap-3">
             <ul
               className={`flex flex-col gap-2 pb-4 h-full items-end py-2 ${
                 !showAllImage && "hidden"
@@ -86,7 +95,7 @@ const ProductDetails = ({
                   className="w-full h-full object-cover object-center"
                   loading="lazy"
                 />
-                <div className=" absolute inset-0 flex items-center justify-between px-5 group/productImg">
+                <div className=" absolute inset-0 flex items-center justify-between px-5 group/productImg ">
                   <LuChevronLeftCircle
                     className="cursor-pointer text-ternary opacity-0 group-hover/productImg:opacity-100 transition-all ease-linear duration-300"
                     size={38}
@@ -110,6 +119,22 @@ const ProductDetails = ({
                     }
                   />
                 </div>
+                {!showAllImage && (
+                  <ul className="flex gap-2 justify-center items-center pt-5">
+                    {Array.from(Array(product?.itemImage.length).keys()).map(
+                      (i) => (
+                        <li
+                          key={i}
+                          className={`h-2 w-2 rounded-full border border-black ${
+                            productImageIndex === i
+                              ? "bg-black"
+                              : "bg-transparent"
+                          }`}
+                        />
+                      )
+                    )}
+                  </ul>
+                )}
               </div>
             ) : (
               <h1 className=" w-1/2 flex justify-center items-center">
@@ -174,13 +199,35 @@ const ProductDetails = ({
               </button>
             </div>
 
-            <h6
+            <button
+              type="button"
               className="text-gray-500 hover:text-primary transition-all ease-linear
-             flex gap-1 items-center w-fit cursor-pointer"
+             flex gap-1 items-center w-fit"
+              onClick={() =>
+                dispatch(
+                  itemExistsInWishList
+                    ? wishListActions.removeFromWishList(product.itemId)
+                    : wishListActions.addToWishList({
+                        ...product,
+                        productQuantity: 1,
+                      })
+                )
+              }
             >
-              <LuHeart />
-              <span className="text-[15px]">Add to Wish List</span>
-            </h6>
+              <LuHeart
+                className={`${
+                  isAuthenticated &&
+                  itemExistsInWishList &&
+                  "text-pink-500 fill-pink-500"
+                }`}
+                // fill={`${itemExistsInWishList ? "pink" : "white"}`}
+              />
+              <span className="text-[15px]">{`${
+                itemExistsInWishList
+                  ? "Remove from Wishlist"
+                  : "Add to Wishlist"
+              }`}</span>
+            </button>
 
             <div>
               <img src={productDetailSpecs} alt="" />

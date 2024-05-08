@@ -5,7 +5,7 @@ import {
   topThreeCategoryData,
 } from "../data/landingPageData";
 import ProductItem from "../../../components/Product/ProductItem";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 let selectedCategoryProducts;
@@ -90,7 +90,7 @@ const TopCollection = () => {
                 <ProductItem
                   key={product.itemId}
                   category={selectedCategory}
-                  {...product}
+                  product={product}
                 />
               ))}
           </ul>

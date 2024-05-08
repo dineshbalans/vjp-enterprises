@@ -94,7 +94,6 @@ const Header = () => {
                     onClick={() => {
                       userMenuHandler();
                       dispatch(userActions.logOutUser());
-                      
                     }}
                     className="cursor-pointer"
                   >
@@ -104,9 +103,9 @@ const Header = () => {
               )}
             </div>
 
-            <div>
+            <Link to={isAuthenticated ? "/customer/wish-list" : "/account/sign-in"}>
               <FiHeart className="scale-[1.5] cursor-pointer" />
-            </div>
+            </Link>
             <Link to="/cart">
               <LiaShoppingCartSolid className="scale-[1.7] cursor-pointer" />
             </Link>

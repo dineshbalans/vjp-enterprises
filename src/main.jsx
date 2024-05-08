@@ -25,8 +25,17 @@ import Orders from "./pages/Customer/Orders.jsx";
 import WishList from "./pages/Customer/WishList.jsx";
 import AddressBook from "./pages/Customer/AddressBook.jsx";
 import AccountInfo from "./pages/Customer/AccountInfo.jsx";
+import AdminLayout from "./pages/layouts/AdminLayout.jsx";
+import Dashboard from "./pages/Admin/pages/Dashboard.jsx";
+import Products from "./pages/Admin/pages/Products.jsx";
+import AddProduct from "./pages/Admin/pages/AddProduct.jsx";
+import Categories from "./pages/Admin/pages/Categories.jsx";
+import AdminOrders from "./pages/Admin/pages/Orders.jsx";
+import Users from "./pages/Admin/pages/Users.jsx";
+import EditProduct from "./pages/Admin/components/EditProduct.jsx";
 
 const routes = createBrowserRouter([
+  // User
   {
     path: "/",
     id: "products",
@@ -117,6 +126,46 @@ const routes = createBrowserRouter([
       {
         path: "checkout",
         element: <Checkout />,
+      },
+    ],
+  },
+  // Admin
+  {
+    path: "admin",
+    element: <AdminLayout />,
+    children: [
+      {
+        index: true,
+        element: <Dashboard />,
+      },
+      {
+        path: "products",
+        children: [
+          {
+            index: true,
+            element: <Products />,
+          },
+          {
+            path: ":productId",
+            element: <EditProduct />,
+          },
+        ],
+      },
+      {
+        path: "addproduct",
+        element: <AddProduct />,
+      },
+      {
+        path: "category",
+        element: <Categories />,
+      },
+      {
+        path: "orders",
+        element: <AdminOrders />,
+      },
+      {
+        path: "users",
+        element: <Users />,
       },
     ],
   },

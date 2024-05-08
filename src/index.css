@@ -5,7 +5,7 @@
 
 @layer base {
   body {
-    @apply font-body leading-6 bg-white scrollbar-hide;
+    @apply font-body leading-6 bg-white scrollbar-hide relative;
   }
 
   .input {

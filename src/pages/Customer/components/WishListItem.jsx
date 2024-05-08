@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import productImg from "../../../assets/product1.jpg";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { cartActions } from "../../../store/cartSlice";
+import { wishListActions } from "../../../store/wishListSlice";
 
 const WishListItem = ({ product, category }) => {
-  const [productQuantity, setProductQuantity] = useState(1);
+  const dispatch = useDispatch();
 
-  const addToCartHandler = () => {
-    alert("product Added to Cart");
-  };
   return (
     <li className="w-[24.5%] mb-6 space-y-3 p-2">
       <div className="">
@@ -36,11 +36,18 @@ const WishListItem = ({ product, category }) => {
       </div>
       <button
         className="text-white   bg-primary font-semibold px-5 py-[6px] rounded-full"
-        onClick={addToCartHandler}
+        onClick={() => dispatch(cartActions.addProduct(product))}
       >
         Add to cart
       </button>
-      <h6 className="txt cursor-pointer w-fit">Remove Item</h6>
+      <h6
+        className="txt cursor-pointer w-fit"
+        onClick={() =>
+          dispatch(wishListActions.removeFromWishList(product?.itemId))
+        }
+      >
+        Remove Item
+      </h6>
     </li>
   );
 };
