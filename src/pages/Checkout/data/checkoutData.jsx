@@ -1,12 +1,20 @@
-export const StateSelect = ({ isError, id, value, dispatch, className }) => {
+export const StateSelect = ({
+  isError,
+  id,
+  value,
+  dispatch,
+  className,
+  disabled = false,
+}) => {
   return (
     <>
       <select
         id={id}
         value={value}
+        disabled={disabled}
         className={`${className} border px-3 py-3 focus:outline-dotted text-ternary w-full placeholder:text-gray-500 ${
           isError && "text-red-600 placeholder:text-red-600 border-red-600"
-        }`}
+        } disabled:bg-gray-200`}
         onChange={(e) => {
           isError && dispatch({ type: `${id}Err`, payload: "" });
           dispatch({ type: `${id}Val`, payload: e.target.value });
@@ -56,16 +64,24 @@ export const StateSelect = ({ isError, id, value, dispatch, className }) => {
     </>
   );
 };
-export const CountrySelect = ({ isError, id, value, dispatch, className }) => {
+export const CountrySelect = ({
+  isError,
+  id,
+  value,
+  dispatch,
+  className,
+  disabled = false,
+}) => {
   return (
     // Country names and Country Code
     <>
       <select
         id={id}
         name={id}
+        disabled={disabled}
         className={`${className} border px-3 py-3 focus:outline-dotted text-ternary w-full placeholder:text-gray-500 ${
           isError && "text-red-600 placeholder:text-red-600 border-red-600"
-        }`}
+        } disabled:bg-gray-200`}
         value={value}
         onChange={(e) => {
           isError && dispatch({ type: `${id}Err`, payload: "" });

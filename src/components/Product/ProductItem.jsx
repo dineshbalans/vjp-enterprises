@@ -11,34 +11,42 @@ import { createPortal } from "react-dom";
 import ProductDetails from "./ProductDetails";
 import { AiOutlineClose } from "react-icons/ai";
 import { userActions } from "../../store/userSlice";
+import { useMutation } from "react-query";
+import { axiosInstance } from "../../services/axios";
+import { toast } from "react-toastify";
 
-const ProductItem = ({
-  cardSize,
-  category,
-  // itemId,
-  // itemTitle = "Product Name",
-  // itemImage,
-  // isSale,
-  // actualPrice = 1000,
-  // discountPrice,
-  // discountPercentage,
-  product,
-}) => {
+const ProductItem = ({ cardSize, category, product }) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
   const wishlistItems = useSelector((state) => state.wishlist.items);
-  const productDetailModal = useSelector(
-    (state) => state.ui.modal.productDetailModal
+
+  const exitsInWishList = wishlistItems.some(
+    (item) => item._id === product?._id
   );
 
-  const exitsInWishList = wishlistItems.find(
-    (item) => item.itemId === product?.itemId
+  const { mutate: processWishList } = useMutation(
+    (id) => axiosInstance.put(`/user/wishlist/${id}`),
+    {
+      onSuccess: (res) => {
+        console.log(res);
+        dispatch(
+          exitsInWishList
+            ? wishListActions.removeFromWishList(product?._id)
+            : wishListActions.addToWishList(product)
+        );
+        toast.success(
+          !exitsInWishList
+            ? "Product Added to WishList!"
+            : "Product Removed from WishList!"
+        );
+      },
+      onError: (err) => console.log(err),
+    }
   );
 
   return (
-    <li className="w-[23%] mb-6 ">
+    <li className="w-full sml:w-[47%] md:w-[31%] lg:w-[23%] mb-6 ">
       {createPortal(
         <ModelSignup product={product} />,
         document.getElementById("modal")
@@ -49,7 +57,7 @@ const ProductItem = ({
       )}
       <div className="relative cursor-pointer group/card mb-2">
         <img
-          src={product?.itemImage ? product?.itemImage[0] : productImg}
+          src={product?.images ? product?.images[0] : productImg}
           alt=""
           loading="lazy"
           className=" object-cover object-center h-64 w-full"
@@ -83,14 +91,7 @@ const ProductItem = ({
             className="absolute top-4 left-4"
             onClick={() =>
               isAuthenticated
-                ? dispatch(
-                    exitsInWishList
-                      ? wishListActions.removeFromWishList(product?.itemId)
-                      : wishListActions.addToWishList({
-                          ...product,
-                          productQuantity: 1,
-                        })
-                  )
+                ? processWishList(product?._id)
                 : dispatch(uiActions.wishListSignInModalHandler())
             }
           >
@@ -108,8 +109,8 @@ const ProductItem = ({
       <div className="space-y-1">
         <Link
           // to={"/products/" + itemTitle}
-          to={`/products/${category}/${product?.itemId}`}
-          // to={`${itemId}`}
+          to={`/products/${category}/${product?._id}`}
+          // to={`${_id}`}
           className="text-[15px] font-medium text-ternary hover:text-pink-500
                   transition-all ease-linear cursor-pointer"
         >

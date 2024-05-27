@@ -9,14 +9,17 @@ const wishListSlice = createSlice({
   name: "wishlist",
   initialState,
   reducers: {
+    setWishList(state, { payload }) {
+      state.items = payload;
+    },
     addToWishList(state, { payload }) {
       const itemExist = state.items.find(
-        (item) => item.itemId === payload.itemId
+        (item) => item._id === payload._id
       );
       itemExist ? alert("Item already added") : state.items.push(payload);
     },
     removeFromWishList(state, { payload }) {
-      state.items = state.items.filter((item) => item.itemId !== payload);
+      state.items = state.items.filter((item) => item._id !== payload);
     },
     clearWishList(state) {
       state.items = [];

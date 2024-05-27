@@ -6,6 +6,7 @@ import {
   FaUser,
 } from "react-icons/fa";
 import { BiSolidShoppingBags } from "react-icons/bi";
+import { TbCategoryPlus } from "react-icons/tb";
 
 export const asideBarData = [
   {
@@ -34,12 +35,18 @@ export const asideBarData = [
   },
   {
     id: "abd_5",
+    Icon: TbCategoryPlus,
+    text: "Sub Categories",
+    path: "/admin/sub-category",
+  },
+  {
+    id: "abd_6",
     Icon: BiSolidShoppingBags,
     text: "Orders",
     path: "/admin/orders",
   },
   {
-    id: "abd_6",
+    id: "abd_7",
     Icon: FaUser,
     text: "Users",
     path: "/admin/users",

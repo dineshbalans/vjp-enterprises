@@ -10,10 +10,11 @@ import Breadcrumbs from "../General/UI/Breadcrumbs";
 import { useDispatch, useSelector } from "react-redux";
 import { cartActions } from "../../store/cartSlice";
 import { wishListActions } from "../../store/wishListSlice";
+import { useMutation } from "react-query";
+import { axiosInstance } from "../../services/axios";
 
 const ProductDetails = ({
   product,
-  productCategory,
   showAllImage = true,
   showBreadCrumbs = true,
 }) => {
@@ -26,8 +27,9 @@ const ProductDetails = ({
   const wishListItems = useSelector((state) => state.wishlist.items);
 
   const itemExistsInWishList = wishListItems.find(
-    (item) => item.itemId === product.itemId
+    (item) => item._id === product._id
   );
+  console.log(product);
 
   const addToCartHandler = () => {
     const price = product?.actualPrice;
@@ -35,9 +37,9 @@ const ProductDetails = ({
     // .replace(/,/g, "").slice(1);
     // console.log({...product,productQuantity});
     // const cartData = {
-    //   itemId: product?.itemId,
+    //   _id: product?._id,
     //   itemTitle: product?.itemTitle,
-    //   itemImage: product?.itemImage,
+    //   images: product?.images,
     //   price,
     //   productQuantity,
     //   category: product?.subCategory,
@@ -46,31 +48,46 @@ const ProductDetails = ({
     // console.log(cartData);
   };
 
+  const { mutate: processWishList } = useMutation(
+    (id) => axiosInstance.put(`/user/wishlist/${id}`),
+    {
+      onSuccess: (res) => {
+        console.log(res);
+        dispatch(
+          itemExistsInWishList
+            ? wishListActions.removeFromWishList(product?._id)
+            : wishListActions.addToWishList(product)
+        );
+      },
+      onError: (err) => console.log(err),
+    }
+  );
   return (
     <>
       {showBreadCrumbs && (
         <Breadcrumbs
           currentPage={[
-            { text: productCategory, URL: ".." },
+            {
+              text: product?.subCategory
+                ?.split("/")[0]
+                .split("-")
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(" "),
+              URL: "..",
+            },
             { text: product?.itemTitle, URL: "" },
           ]}
         />
       )}
       <section className="p-5 md:p-10 space-y-12">
         <div className="flex flex-wrap lg:flex-nowrap justify-between items-center gap-5">
-          {/* <div className="sml:hidden pt-6 pb-3">
-            <span className="text-gray-500 text-sm">
-              <Link to="/">Home</Link> / <Link to="..">{productCategory}</Link>{" "}
-              / {product?.itemTitle}
-            </span>
-          </div> */}
-          <div className="w-full lg:w-1/2 flex relative gap-3">
+          <div className="w-full lg:w-1/2 flex flex-wrap-reverse mdl:flex-nowrap  relative gap-3">
             <ul
-              className={`flex flex-col gap-2 pb-4 h-full items-end py-2 ${
+              className={`flex flex-row mdl:flex-col gap-2 pb-4 h-full justify-center w-full mdl:w-fit items-end py-2 ${
                 !showAllImage && "hidden"
               }`}
             >
-              {product?.itemImage?.map((image, index) => (
+              {product?.images?.map((image, index) => (
                 <li
                   key={index}
                   onClick={() => setProductImageIndex(index)}
@@ -87,10 +104,10 @@ const ProductDetails = ({
                 </li>
               ))}
             </ul>
-            {product?.itemImage ? (
+            {product?.images ? (
               <div className="relative">
                 <img
-                  src={product?.itemImage[productImageIndex]}
+                  src={product?.images[productImageIndex]}
                   alt=""
                   className="w-full h-full object-cover object-center"
                   loading="lazy"
@@ -102,7 +119,7 @@ const ProductDetails = ({
                     onClick={() =>
                       setProductImageIndex((prevState) =>
                         prevState === 0
-                          ? product?.itemImage.length - 1
+                          ? product?.images.length - 1
                           : prevState - 1
                       )
                     }
@@ -112,7 +129,7 @@ const ProductDetails = ({
                     size={38}
                     onClick={() =>
                       setProductImageIndex((prevState) =>
-                        prevState === product?.itemImage.length - 1
+                        prevState === product?.images.length - 1
                           ? 0
                           : prevState + 1
                       )
@@ -121,7 +138,7 @@ const ProductDetails = ({
                 </div>
                 {!showAllImage && (
                   <ul className="flex gap-2 justify-center items-center pt-5">
-                    {Array.from(Array(product?.itemImage.length).keys()).map(
+                    {Array.from(Array(product?.images.length).keys()).map(
                       (i) => (
                         <li
                           key={i}
@@ -144,12 +161,6 @@ const ProductDetails = ({
           </div>
 
           <div className="w-full lg:w-[47%] space-y-5 text-ternary">
-            {/* <div className="hidden sml:block">
-              <span className="text-gray-500 text-sm">
-                <Link to="/">Home</Link> /{" "}
-                <Link to="..">{productCategory}</Link> / {product?.itemTitle}
-              </span>
-            </div> */}
             <h1 className="text-gray-800 text-xl font-semibold text-justify sml:text-left">
               {product?.itemTitle}
             </h1>
@@ -203,16 +214,7 @@ const ProductDetails = ({
               type="button"
               className="text-gray-500 hover:text-primary transition-all ease-linear
              flex gap-1 items-center w-fit"
-              onClick={() =>
-                dispatch(
-                  itemExistsInWishList
-                    ? wishListActions.removeFromWishList(product.itemId)
-                    : wishListActions.addToWishList({
-                        ...product,
-                        productQuantity: 1,
-                      })
-                )
-              }
+              onClick={() => processWishList(product._id)}
             >
               <LuHeart
                 className={`${
@@ -245,7 +247,9 @@ const ProductDetails = ({
 
             <h4 className="text-center sml:text-left">
               Category:{" "}
-              <span className="capitalize text-primary">{productCategory}</span>
+              <span className="capitalize text-primary">
+                {product?.subCategory?.split("/")[0]}
+              </span>
             </h4>
           </div>
         </div>

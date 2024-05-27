@@ -1,10 +1,14 @@
-import React, { useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 import { FaAmazonPay } from "react-icons/fa";
 import { CountrySelect, StateSelect } from "../data/checkoutData";
 import Input, { LabelText } from "../../../components/General/Input";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const initialValue = {
   isValid: { isError: "" },
+
+  gstNum: { value: "", isError: "" },
   email: { value: "", isError: "" },
   firstName: { value: "", isError: "" },
   lastName: { value: "", isError: "" },
@@ -28,6 +32,16 @@ const reducer = (prevState, action) => {
       ...prevState,
       isValid: { ...prevState.isValid, isError: action.payload },
     };
+  } else if (action.type === "gstNumVal" || action.type === "gstNumErr") {
+    return action.type === "gstNumVal"
+      ? {
+          ...prevState,
+          gstNum: { ...prevState.gstNum, value: action.payload },
+        }
+      : {
+          ...prevState,
+          gstNum: { ...prevState.gstNum, isError: action.payload },
+        };
   } else if (action.type === "emailVal" || action.type === "emailErr") {
     return action.type === "emailVal"
       ? {
@@ -168,93 +182,45 @@ const reducer = (prevState, action) => {
             isError: action.payload,
           },
         };
+  } else if (action.type === "INIT") {
+    return action.payload;
   } else if (action.type == "RESET") {
     return initialValue;
   }
   return prevState;
 };
 
-const CheckOutForm = () => {
+const CheckOutForm = ({ setIsShippingCmplted }) => {
+  const navigate = useNavigate();
   const [form, dispatch] = useReducer(reducer, initialValue);
 
-  const formSubmitHandler = (event) => {
-    event.preventDefault();
-    if (
-      form.email.value.trim().length === 0 &&
-      form.firstName.value.trim().length === 0 &&
-      form.lastName.value.trim().length === 0 &&
-      form.address.value.trim().length === 0 &&
-      form.country.value.trim().length === 0 &&
-      form.state.value.trim().length === 0 &&
-      form.city.value.trim().length === 0 &&
-      form.zipCode.value.trim().length === 0 &&
-      form.phone.value.trim().length === 0 &&
-      form.shippingMethod.value.trim().length === 0
-    ) {
-      dispatch({
-        type: "formIsNotValid",
-        payload: "Please fill the form to proceed further",
-      });
-    } else if (form.email.value.trim().length === 0) {
-      dispatch({ type: "emailErr", payload: "Enter a valid Email Address!" });
-    } else if (
-      form.firstName.value.trim().length === 0 ||
-      form.firstName.value.trim().length < 5
-    ) {
-      form.firstName.value.trim().length === 0
-        ? dispatch({ type: "fnameErr", payload: "Enter a valid First Name!" })
-        : dispatch({
-            type: "fnameErr",
-            payload: "FirstName length must be of greater than 4",
-          });
-    } else if (form.lastName.value.trim().length === 0) {
-      dispatch({ type: "lnameErr", payload: "Enter a valid Last Name!" });
-    } else if (form.address.value.trim().length === 0) {
-      dispatch({
-        type: "addressErr",
-        payload: "Enter a valid Street address!",
-      });
-    } else if (form.country.value.trim().length === 0) {
-      dispatch({
-        type: "countryErr",
-        payload: "Select A Valid Country",
-      });
-    } else if (form.state.value.trim().length === 0) {
-      dispatch({
-        type: "stateErr",
-        payload: "Select A Valid State",
-      });
-    } else if (form.city.value.trim().length === 0) {
-      dispatch({
-        type: "cityErr",
-        payload: "Enter a valid city!",
-      });
-    } else if (form.zipCode.value.trim().length === 0) {
-      dispatch({
-        type: "zipCodeErr",
-        payload: "Enter a valid Zip Code!",
-      });
-    } else if (form.phone.value.trim().length === 0) {
-      dispatch({
-        type: "phoneErr",
-        payload: "Enter a valid Phone Number!",
-      });
-    } else if (form.shippingMethod.value.trim().length === 0) {
-      dispatch({
-        type: "shippingMethodErr",
-        payload: "Select a valid Shipping Method",
-      });
-    } else {
-      console.log("CHECK OUT Form Submitted Successfully");
-      console.log(form);
-      dispatch({ type: "RESET" });
+  const user = useSelector((state) => state.user.user);
+
+  useEffect(() => {
+    if (user) {
+      const init = {
+        ...initialValue,
+        gstNum: { ...initialValue.gstNum, value: user.gstNum },
+        email: { ...initialValue.email, value: user.email },
+        firstName: { ...initialValue.firstName, value: user.fName },
+        lastName: { ...initialValue.lastName, value: user.lName },
+        address: { ...initialValue.address, value: user.strtAddrss },
+        country: { ...initialValue.country, value: user.cntry },
+        state: { ...initialValue.state, value: user.state },
+        city: { ...initialValue.city, value: user.city },
+        zipCode: { ...initialValue.zipCode, value: user.zipCode },
+        phone: { ...initialValue.phone, value: user.phNum },
+      };
+      dispatch({ type: "INIT", payload: init });
     }
-  };
+  }, [user]);
+
+  console.log(user);
   console.log(form);
 
   return (
     <section className="w-full lg:w-[63%] space-y-8">
-      <form 
+      <form
         className={`rounded-md sml:p-8 bg-[#F5F5F5] ${
           form.isValid.isError && "p-8 border border-red-500"
         }`}
@@ -276,6 +242,22 @@ const CheckOutForm = () => {
         </h3>
         {/* Customer information */}
         <div className="space-y-4">
+          {/* GST Number */}
+          <div>
+            <LabelText
+              htmlFor="gstNum"
+              text="GST Number"
+              error={form.gstNum.isError}
+            />
+            <Input
+              id="gstNum"
+              type="text"
+              dispatch={dispatch}
+              value={form.gstNum.value}
+              isError={form.gstNum.isError}
+              disabled
+            />
+          </div>
           {/* Email */}
           <div>
             <LabelText
@@ -289,6 +271,7 @@ const CheckOutForm = () => {
               dispatch={dispatch}
               value={form.email.value}
               isError={form.email.isError}
+              disabled
             />
           </div>
           {/* First Name */}
@@ -304,6 +287,7 @@ const CheckOutForm = () => {
               dispatch={dispatch}
               value={form.firstName.value}
               isError={form.firstName.isError}
+              disabled
             />
           </div>
           {/* Last Name */}
@@ -319,6 +303,7 @@ const CheckOutForm = () => {
               dispatch={dispatch}
               value={form.lastName.value}
               isError={form.lastName.isError}
+              disabled
             />
           </div>
           {/* Company */}
@@ -335,6 +320,7 @@ const CheckOutForm = () => {
               dispatch={dispatch}
               value={form.company.value}
               isError={form.company.isError}
+              disabled
             />
           </div>
           {/* Address */}
@@ -351,6 +337,7 @@ const CheckOutForm = () => {
               dispatch={dispatch}
               value={form.address.value}
               isError={form.address.isError}
+              disabled
             />
           </div>
           {/* Country */}
@@ -365,6 +352,7 @@ const CheckOutForm = () => {
               dispatch={dispatch}
               isError={form.country.isError}
               value={form.country.value}
+              disabled
             />
           </div>
           {/* State */}
@@ -379,6 +367,7 @@ const CheckOutForm = () => {
               dispatch={dispatch}
               isError={form.state.isError}
               value={form.state.value}
+              disabled
             />
           </div>
           {/* City */}
@@ -395,6 +384,7 @@ const CheckOutForm = () => {
               dispatch={dispatch}
               value={form.city.value}
               isError={form.city.isError}
+              disabled
             />
           </div>
           {/* Zip Code */}
@@ -410,6 +400,7 @@ const CheckOutForm = () => {
               dispatch={dispatch}
               value={form.zipCode.value}
               isError={form.zipCode.isError}
+              disabled
             />
           </div>
           {/* Phone */}
@@ -425,9 +416,28 @@ const CheckOutForm = () => {
               dispatch={dispatch}
               value={form.phone.value}
               isError={form.phone.isError}
+              disabled
             />
           </div>
+          <div className="flex items-center justify-between">
+            <button
+              className="bg-ternary text-white px-5 py-[10px] rounded-full w-1/4"
+              onClick={() => navigate("/customer/address-book")}
+            >
+              Edit
+            </button>
+            <button
+              className="bg-primary text-white font-medium w-1/4 py-[10px] rounded-full ml-auto"
+              onClick={() => {
+                window.scrollTo(0, 0);
+                setIsShippingCmplted(true);
+              }}
+            >
+              Next
+            </button>
+          </div>
         </div>
+
         {/* Additional information */}
         {/* <div className="space-y-4">
         <div>
@@ -490,69 +500,6 @@ const CheckOutForm = () => {
         </h2>
       )} */}
       </form>
-      <div
-        className={`rounded-md sml:p-8 bg-[#F5F5F5] space-y-5
-        flex flex-col ${
-          (form.isValid.isError || form.shippingMethod.isError) &&
-          "p-8 border border-red-500"
-        }`}
-      >
-        <h1 className="text-2xl font-medium text-black border-b-2 pb-3">
-          Shipping Methods
-        </h1>
-        <div className="space-y-2">
-          {form.shippingMethod.isError && (
-            <h1 className="text-red-600 p-2 animate-pulse">
-              {form.shippingMethod.isError}
-            </h1>
-          )}
-          <div className="border bg-white w-full  py-2 flex justify-between items-center relative">
-            <label htmlFor="free" className="absolute inset-0" />
-            <input
-              type="radio"
-              name=""
-              id="free"
-              className="w-1/4"
-              onClick={() => {
-                form.shippingMethod.isError &&
-                  dispatch({ type: "shippingMethodErr", payload: "" });
-                dispatch({ type: "shippingMethodVal", payload: "free" });
-              }}
-              checked={form.shippingMethod.value === "free"}
-            />
-            <h4 className="w-1/4">$0.00</h4>
-            <h4 className="w-1/4">Free</h4>
-            <h4 className="w-1/4">Free Shipping</h4>
-          </div>
-          <div className="border bg-white w-full py-2 flex justify-between items-center relative">
-            <label htmlFor="fixed" className="absolute inset-0" />
-            <input
-              type="radio"
-              name=""
-              id="fixed"
-              className="w-1/4"
-              onClick={() => {
-                form.shippingMethod.isError &&
-                  dispatch({ type: "shippingMethodErr", payload: "" });
-                dispatch({
-                  type: "shippingMethodVal",
-                  payload: "fixed",
-                });
-              }}
-              checked={form.shippingMethod.value === "fixed"}
-            />
-            <h4 className="w-1/4">$5.00</h4>
-            <h4 className="w-1/4">Fixed</h4>
-            <h4 className="w-1/4">Flat Rate</h4>
-          </div>
-        </div>
-        <button
-          className="bg-primary text-white font-medium w-1/4 py-3 rounded-full ml-auto"
-          onClick={formSubmitHandler}
-        >
-          Next
-        </button>
-      </div>
     </section>
   );
 };

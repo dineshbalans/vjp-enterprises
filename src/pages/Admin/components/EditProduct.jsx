@@ -1,9 +1,13 @@
-import React, { useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 import Breadcrumbs from "../../../components/General/UI/Breadcrumbs";
 import Input, { LabelText } from "../../../components/General/Input";
-import ImageUploader from "./ImageUploader";
-import SlctSubCtgry from "./SlctSubCtgry";
-import HighlightsForm from "./HighlightsForm";
+import ImageUploader from "../pages/AddProduct/components/ImageUploader";
+import SlctSubCtgry from "../pages/AddProduct/components/SlctSubCtgry";
+import HighlightsForm from "../pages/AddProduct/components/HighlightsForm";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useMutation, useQueryClient } from "react-query";
+import { axiosInstance } from "../../../services/axios";
 
 const initialState = {
   pName: { value: "", error: "" },
@@ -25,6 +29,7 @@ const initialState = {
   pStock: { value: null, error: "" },
 };
 const reducer = (prevState, action) => {
+  // Product Name
   if (action.type === "pNameVal" || action.type === "pNameErr") {
     return action.type === "pNameVal"
       ? {
@@ -36,6 +41,7 @@ const reducer = (prevState, action) => {
           pName: { ...prevState.pName, error: action.payload },
         };
   }
+  // Product Description
   if (action.type === "pDescVal" || action.type === "pDescErr") {
     return action.type === "pDescVal"
       ? {
@@ -47,6 +53,7 @@ const reducer = (prevState, action) => {
           pDesc: { ...prevState.pDesc, error: action.payload },
         };
   }
+  // Product Image
   if (action.type === "pImgVal" || action.type === "pImgErr") {
     return action.type === "pImgVal"
       ? {
@@ -58,6 +65,7 @@ const reducer = (prevState, action) => {
           pImg: { ...prevState.pImg, error: action.payload },
         };
   }
+  // Product Category
   if (action.type === "pCtgryVal" || action.type === "pCtgryErr") {
     return action.type === "pCtgryVal"
       ? {
@@ -69,6 +77,7 @@ const reducer = (prevState, action) => {
           pCtgry: { ...prevState.pCtgry, error: action.payload },
         };
   }
+  // Product Sub Category
   if (action.type === "pSbCtgryVal" || action.type === "pSbCtgryErr") {
     return action.type === "pSbCtgryVal"
       ? {
@@ -152,16 +161,109 @@ const reducer = (prevState, action) => {
           pStock: { ...prevState.pStock, error: action.payload },
         };
   }
+  if (action.type === "INIT") {
+    return action.payload;
+  }
+  return prevState;
 };
 
 const EditProduct = () => {
+  const { productId } = useParams();
+  const queryClient = useQueryClient();
+
   const [product, dispatch] = useReducer(reducer, initialState);
+  const adminProducts = useSelector((state) => state.admin.products);
+
+  const productDetails = adminProducts.find(
+    (product) => product._id === productId
+  );
+
+  const { mutate: updateProduct } = useMutation(
+    (data) =>
+      axiosInstance.put(`/item/update/${productId}`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }),
+    {
+      onSuccess: (res) => {
+        console.log(res.data);
+        queryClient.invalidateQueries(["category"]);
+      },
+      onError: (error) => console.log(error),
+    }
+  );
 
   const submitHandler = (e) => {
     e.preventDefault();
     console.log(product);
+    const formData = new FormData();
+    formData.append("itemTitle", product.pName.value);
+    formData.append("itemDescription", product.pDesc.value);
+    // formData.append("images", product.pImg.value);
+    formData.append("stock", product.pStock.value);
+    formData.append(
+      "subCategory",
+      product.pCtgry.value && product.pSbCtgry.value
+        ? `${product.pCtgry.value}/${product.pSbCtgry.value}`
+        : ""
+    );
+    formData.append("isSale", product.pSale.value);
+    formData.append("isTrending", product.pTrend.value);
+    formData.append("actualPrice", product.pPrice.value);
+    formData.append("discountPercentage", product.pDiscPer.value);
+    formData.append("highlights", JSON.stringify(product.pHighlts.value));
+
+    // Separate new files and existing URLs
+    const imageFiles = product.pImg.value.filter(
+      (image) => image instanceof File
+    );
+    const imageUrls = product.pImg.value.filter(
+      (image) => typeof image === "string"
+    );
+
+    imageUrls.forEach((url) => {
+      formData.append("existingImages", url);
+    });
+
+    imageFiles.forEach((file) => {
+      formData.append("newImages", file);
+    });
+
+    console.log(productDetails);
+    console.log(formData);
+    updateProduct(formData);
     alert("Product Updated Successfully");
   };
+
+  useEffect(() => {
+    const initialVal = {
+      pName: { value: productDetails?.itemTitle, error: "" },
+      pDesc: { value: productDetails?.itemDescription, error: "" },
+      pImg: { value: productDetails?.images, error: "" },
+      pCtgry: { value: productDetails?.category, error: "" },
+      pSbCtgry: { value: productDetails?.subCategoryId, error: "" },
+      pTrend: { value: productDetails?.isTrending, error: "" },
+      pSale: { value: productDetails?.isSale, error: "" },
+      pPrice: { value: productDetails?.actualPrice, error: "" },
+      pDiscPer: { value: productDetails?.discountPercentage, error: "" },
+      pHighlts: {
+        value:
+          productDetails?.highlights && JSON.parse(productDetails?.highlights),
+        error: {
+          index: "",
+          type: "",
+        },
+      },
+      pStock: { value: productDetails?.stock, error: "" },
+    };
+
+    dispatch({ type: "INIT", payload: initialVal });
+  }, [productDetails]);
+
+  // console.log(adminProducts);
+  console.log(product);
+
   return (
     <div>
       <Breadcrumbs
@@ -351,6 +453,8 @@ const EditProduct = () => {
             <HighlightsForm
               dispatch={dispatch}
               error={product.pHighlts.error}
+              init={product.pHighlts.value}
+              role="UPDATE"
             />
           </div>
 

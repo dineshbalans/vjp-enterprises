@@ -25,7 +25,16 @@ const Breadcrumbs = ({
           {currentPage.map(({ URL, text }, index) => (
             <li className="flex items-center gap-3" key={index}>
               <FaAngleRight className="text-gray-500 scale-90" />
-              {URL ? <Link to={URL}>{text}</Link> : <h3>{text}</h3>}
+              {URL ? (
+                <Link
+                  to={URL}
+                  className="text-gray-500 hover:underline transition-all ease-linear"
+                >
+                  {text}
+                </Link>
+              ) : (
+                <h3>{text}</h3>
+              )}
             </li>
           ))}
         </ul>

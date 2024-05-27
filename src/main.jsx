@@ -26,13 +26,21 @@ import WishList from "./pages/Customer/WishList.jsx";
 import AddressBook from "./pages/Customer/AddressBook.jsx";
 import AccountInfo from "./pages/Customer/AccountInfo.jsx";
 import AdminLayout from "./pages/layouts/AdminLayout.jsx";
-import Dashboard from "./pages/Admin/pages/Dashboard.jsx";
-import Products from "./pages/Admin/pages/Products.jsx";
-import AddProduct from "./pages/Admin/pages/AddProduct.jsx";
-import Categories from "./pages/Admin/pages/Categories.jsx";
-import AdminOrders from "./pages/Admin/pages/Orders.jsx";
-import Users from "./pages/Admin/pages/Users.jsx";
+import Dashboard from "./pages/Admin/pages/Dashboard/Dashboard.jsx";
+import Products from "./pages/Admin/pages/Products/Products.jsx";
+import AddProduct from "./pages/Admin/pages/AddProduct/AddProduct.jsx";
+import Categories from "./pages/Admin/pages/Categories/Categories.jsx";
+import AdminOrders from "./pages/Admin/pages/Orders/Orders.jsx";
+import Users from "./pages/Admin/pages/Users/Users.jsx";
 import EditProduct from "./pages/Admin/components/EditProduct.jsx";
+import EditCategory from "./pages/Admin/components/EditCategory.jsx";
+import OrderDetails from "./pages/Admin/pages/Orders/components/OrderDetails.jsx";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
+import SubCategory from "./pages/Admin/pages/SubCategory/SubCategory.jsx";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import OrderSuccess from "./pages/OrderSuccess.jsx";
 
 const routes = createBrowserRouter([
   // User
@@ -127,6 +135,10 @@ const routes = createBrowserRouter([
         path: "checkout",
         element: <Checkout />,
       },
+      {
+        path: "order-success",
+        element: <OrderSuccess />
+      },
     ],
   },
   // Admin
@@ -157,11 +169,33 @@ const routes = createBrowserRouter([
       },
       {
         path: "category",
-        element: <Categories />,
+        children: [
+          {
+            index: true,
+            element: <Categories />,
+          },
+          {
+            path: "edit/:categoryId",
+            element: <EditCategory />,
+          },
+        ],
+      },
+      {
+        path: "sub-category",
+        element: <SubCategory />,
       },
       {
         path: "orders",
-        element: <AdminOrders />,
+        children: [
+          {
+            index: true,
+            element: <AdminOrders />,
+          },
+          {
+            path: ":orderId",
+            element: <OrderDetails />,
+          },
+        ],
       },
       {
         path: "users",
@@ -171,12 +205,22 @@ const routes = createBrowserRouter([
   },
 ]);
 
+const queryClient = new QueryClient();
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   // <React.StrictMode>
   <FramerMotion>
-    <Provider store={store}>
-      <RouterProvider router={routes} />
-    </Provider>
+    <QueryClientProvider client={queryClient}>
+      <ToastContainer
+        autoClose={3000}
+        newestOnTop={true}
+        className="font-poppins"
+      />
+      <ReactQueryDevtools initialIsOpen={false} />
+      <Provider store={store}>
+        <RouterProvider router={routes} />
+      </Provider>
+    </QueryClientProvider>
   </FramerMotion>
   // </React.StrictMode>
 );

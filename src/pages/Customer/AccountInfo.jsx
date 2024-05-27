@@ -196,6 +196,22 @@ const AccountInfo = () => {
             isError={user.lName.error}
           />
         </div>
+        {/* Last Name */}
+        <div>
+          <LabelText
+            text="Last Name"
+            className="text-gray-600 text-[15px] pb-1"
+            htmlFor="lName"
+            error={user.lName.error}
+          />
+          <Input
+            className="text-gray-600 text-sm pb-2 pt-2"
+            id="lName"
+            dispatch={dispatch}
+            value={user.lName.value}
+            isError={user.lName.error}
+          />
+        </div>
         {/* CheckBox: Change Email */}
         <div className="flex  items-center gap-2">
           <input

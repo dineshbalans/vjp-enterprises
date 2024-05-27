@@ -11,11 +11,21 @@ const RelatedProducts = ({ relatedProducts, category }) => {
         <h1 className="text-2xl font-medium">Related Products</h1>
         <hr className="border border-black w-16" />
       </div>
-      <ul className="flex flex-wrap justify-between">
-        {relatedProducts?.map((product) => (
-          <ProductItem key={product.itemId} {...product} category={category} />
-        ))}
-      </ul>
+      {relatedProducts?.length > 0 ? (
+        <ul className="flex flex-wrap justify-between">
+          {relatedProducts?.map((product) => (
+            <ProductItem
+              key={product._id}
+              product={product}
+              category={category}
+            />
+          ))}
+        </ul>
+      ) : (
+        <p className="flex justify-center items-center h-20">
+          No Related Product(s) is associated with this Product
+        </p>
+      )}
     </div>
   );
 };

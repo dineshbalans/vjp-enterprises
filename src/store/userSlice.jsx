@@ -5,6 +5,7 @@ const userSlice = createSlice({
   initialState: {
     isAuthenticated: false,
     user: {},
+    orders: [],
   },
   reducers: {
     loginUser(state) {
@@ -12,6 +13,15 @@ const userSlice = createSlice({
     },
     logOutUser(state) {
       state.isAuthenticated = false;
+    },
+    setUser(state, { payload }) {
+      state.user = payload;
+    },
+    addOrders(state, { payload }) {
+      state.orders = payload;
+    },
+    addOrder(state, { payload }) {
+      state.orders = [...state.orders, payload];
     },
   },
 });

@@ -42,6 +42,10 @@
   @apply text-sm text-ternary hover:text-primary transition-all ease-linear;
 }
 
+.bdrBlk {
+  @apply border border-black;
+}
+
 /* Padding */
 
 .pdngx {

@@ -1,8 +1,24 @@
 import React from "react";
 import { FaShoppingBag, FaList, FaUser } from "react-icons/fa";
 import { BiSolidShoppingBags } from "react-icons/bi";
+import { useQuery } from "react-query";
+import { axiosInstance } from "../../../../services/axios";
+import { useDispatch, useSelector } from "react-redux";
+import { adminActions } from "../../../../store/adminSlice";
 
 const Dashboard = () => {
+  const dispatch = useDispatch();
+
+  const dashboard = useSelector((state) => state.admin.dashboard);
+  console.log(dashboard);
+
+  useQuery(["getDashboardData"], () => axiosInstance.get("/admin/dashboard"), {
+    onSuccess: (res) => dispatch(adminActions.setDashboard(res.data.data)),
+    onError: (err) => console.log(err),
+    staleTime: Infinity,
+    cacheTime: Infinity,
+    refetchOnWindowFocus: false,
+  });
   return (
     <div className="text-ternary space-y-4">
       <h1 className="text-3xl font-medium ">Dashboard</h1>
@@ -14,7 +30,7 @@ const Dashboard = () => {
           </div>
           <div className="text-[15px]">
             <h1 className="font-semibold">Total Orders</h1>
-            <h6>130</h6>
+            <h6>{dashboard?.ordersCount}</h6>
           </div>
         </li>
         {/* Category */}
@@ -24,7 +40,7 @@ const Dashboard = () => {
           </div>
           <div className="text-[15px]">
             <h1 className="font-semibold">Total Categorys</h1>
-            <h6>15</h6>
+            <h6>{dashboard?.categoriesCount}</h6>
           </div>
         </li>
         {/* Product */}
@@ -34,7 +50,7 @@ const Dashboard = () => {
           </div>
           <div className="text-[15px]">
             <h1 className="font-semibold">Total Products</h1>
-            <h6>70</h6>
+            <h6>{dashboard?.itemsCount}</h6>
           </div>
         </li>
         {/* User */}
@@ -44,7 +60,7 @@ const Dashboard = () => {
           </div>
           <div className="text-[15px]">
             <h1 className="font-semibold">Total Users</h1>
-            <h6>480</h6>
+            <h6>{dashboard?.usersCount}</h6>
           </div>
         </li>
       </ul>

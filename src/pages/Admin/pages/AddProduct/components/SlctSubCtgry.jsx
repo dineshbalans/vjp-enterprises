@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { LabelText } from "../../../components/General/Input";
+import { LabelText } from "../../../../../components/General/Input";
+import { useSelector } from "react-redux";
 
 const SlctSubCtgry = ({
   dispatch,
@@ -8,20 +9,7 @@ const SlctSubCtgry = ({
   pSbCtgry,
   pSbCtgryErr,
 }) => {
-  const categories = [
-    {
-      name: "Category 1",
-      subcategories: ["Subcategory 1.1", "Subcategory 1.2", "Subcategory 1.3"],
-    },
-    {
-      name: "Category 2",
-      subcategories: ["Subcategory 2.1", "Subcategory 2.2", "Subcategory 2.3"],
-    },
-    {
-      name: "Category 3",
-      subcategories: ["Subcategory 3.1", "Subcategory 3.2", "Subcategory 3.3"],
-    },
-  ];
+  const categories = useSelector((state) => state.admin.categorys);
 
   const handleCategoryChange = (e) => {
     dispatch({ type: "pCtgryVal", payload: e.target.value });
@@ -51,9 +39,9 @@ const SlctSubCtgry = ({
           }
         >
           <option value="">Select a category</option>
-          {categories.map((category, index) => (
-            <option key={index} value={category.name}>
-              {category.name}
+          {categories?.map((category) => (
+            <option key={category._id} value={category._id}>
+              {category.title}
             </option>
           ))}
         </select>
@@ -79,10 +67,10 @@ const SlctSubCtgry = ({
           >
             <option value="">Select a subcategory</option>
             {categories
-              .find((category) => category.name === pCtgry)
-              ?.subcategories.map((subcategory, index) => (
-                <option key={index} value={subcategory}>
-                  {subcategory}
+              .find((category) => category._id === pCtgry)
+              ?.subCategorys?.map((subcategory, index) => (
+                <option key={index} value={subcategory._id}>
+                  {subcategory.name}
                 </option>
               ))}
           </select>

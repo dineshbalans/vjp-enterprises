@@ -12,20 +12,41 @@ function validateObject(obj) {
   return { index: "", type: "" }; // No empty key or value found
 }
 
-const HighlightsForm = ({ dispatch, error }) => {
+const HighlightsForm = ({ dispatch, error, init, role }) => {
+  const [flag, setFlag] = useState(false);
   const [highlights, setHighlights] = useState([{ key: "", value: "" }]);
   const [highlightsErr, setHighlightsErr] = useState(error);
+  console.log(JSON.stringify(highlights));
+  console.log(flag);
+  console.log(init);
+
+  useEffect(() => {
+    if (role === "UPDATE" && init && JSON.stringify(init) !== "{}") {
+      console.log(init);
+      const keyValueArray = Object.entries(init).map(([key, value]) => {
+        return { key, value };
+      });
+      if (!flag) {
+        setFlag(true);
+        setHighlights(keyValueArray);
+      }
+    }
+
+    if (role === "CREATE" && !init) {
+      console.log("first");
+      setFlag(true);
+    }
+  }, [init, role, flag]);
 
   useEffect(() => {
     const result = {};
     highlights.forEach((highlight) => {
       result[highlight.key] = highlight.value;
     });
-
     if (JSON.stringify(result) === '{"":""}') {
       return;
     }
-
+    console.log(result);
     dispatch({ type: "pHighltsVal", payload: result });
   }, [highlights]);
 
@@ -75,7 +96,7 @@ const HighlightsForm = ({ dispatch, error }) => {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        {highlights.map((highlight, index) => (
+        {highlights?.map((highlight, index) => (
           <div key={index} className="mb-4 flex gap-2">
             <input
               type="text"

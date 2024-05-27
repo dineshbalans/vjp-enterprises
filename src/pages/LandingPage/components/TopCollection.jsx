@@ -61,11 +61,11 @@ const TopCollection = () => {
           </div>
 
           {/* Categories */}
-          <ul className="flex justify-center gap-4 text-[15px]">
+          <ul className="flex flex-col sml:flex-row justify-center gap-4 text-[15px] ">
             {topProdCategories.slice(0, 3).map(({ id, name, category }) => (
               <li
                 key={id}
-                className={`border border-dashed rounded-full px-6 py-[6px] cursor-pointer ${
+                className={`border border-dashed rounded-full px-6 py-[6px] cursor-pointer text-center ${
                   selectedCategory === category
                     ? "border-black"
                     : "border-transparent"
@@ -78,7 +78,7 @@ const TopCollection = () => {
           </ul>
 
           {/* Products */}
-          <ul className="flex flex-wrap justify-between">
+          <ul className="flex flex-wrap gap-5 justify-center">
             {selectedCategoryProducts?.items
               .slice(
                 0,

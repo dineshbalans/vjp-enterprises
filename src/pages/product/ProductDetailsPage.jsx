@@ -9,23 +9,21 @@ import { selectRandomElements } from "../../utils/helperFunction";
 import ProtectedRoute from "../../components/General/ProtectedRoute";
 
 const ProductDetailsPage = () => {
+  const dispatch = useDispatch();
+  const { productId, category } = useParams();
+
   const [product, setProduct] = useState({});
   const [productCategory, setProductCategory] = useState("");
   const [relatedProducts, setRelatedProducts] = useState([]);
 
-  const { productId, category } = useParams();
-  const data = useRouteLoaderData("products");
-
-  const dispatch = useDispatch();
   const products = useSelector((state) => state.product.products);
+  console.log(products);
 
   useEffect(() => {
-    // data && dispatch(productActions.addProducts(data));
-
     if (category === "all-products") {
-      (data || products).forEach((product) =>
+      products.forEach((product) =>
         product.items.forEach((item) => {
-          if (item.itemId === productId) {
+          if (item._id === productId) {
             setProduct(item);
             setProductCategory(product.title);
           }
@@ -34,7 +32,7 @@ const ProductDetailsPage = () => {
       return;
     }
 
-    const categoryProduct = (data || products)?.find((product) =>
+    const categoryProduct = products?.find((product) =>
       product.category === category ? product : null
     );
     setProductCategory(categoryProduct?.title);
@@ -42,18 +40,18 @@ const ProductDetailsPage = () => {
     // Setting Related Products
     setRelatedProducts(
       selectRandomElements(
-        (data || products)
+        products
           ?.find((product) => product.category === categoryProduct.category)
-          ?.items.filter((product) => product.itemId !== productId),
+          ?.items.filter((product) => product._id !== productId),
         4
       )
     );
 
     const filteredProduct = categoryProduct?.items.find((item) =>
-      item.itemId === productId ? item : null
+      item._id === productId ? item : null
     );
     setProduct(filteredProduct);
-  }, [products, data, category]);
+  }, [products, category]);
 
   return (
     <div className="space-y-5">
@@ -61,7 +59,7 @@ const ProductDetailsPage = () => {
       <AdditionalInfo description={product?.itemDescription} />
       <RelatedProducts
         relatedProducts={relatedProducts}
-        category={productCategory.toLowerCase()}
+        category={productCategory?.toLowerCase()}
       />
     </div>
   );

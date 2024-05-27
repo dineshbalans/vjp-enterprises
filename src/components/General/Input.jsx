@@ -28,6 +28,7 @@ const Input = ({
   value,
   dispatch,
   className,
+  disabled = false,
 }) => {
   return (
     <>
@@ -36,11 +37,12 @@ const Input = ({
         className={`border px-3 py-3 focus:outline-dotted text-ternary w-full placeholder:text-gray-500
         ${className} ${
           isError && "text-red-600 placeholder:text-red-600 border-red-600"
-        }`}
+        } disabled:bg-gray-200`}
         id={id}
         name={id}
         placeholder={placeholder}
-        value={value}
+        value={value ?? ""}
+        disabled={disabled}
         onChange={(e) => {
           isError && dispatch({ type: `${id}Err`, payload: "" });
           dispatch({ type: `${id}Val`, payload: e.target.value });

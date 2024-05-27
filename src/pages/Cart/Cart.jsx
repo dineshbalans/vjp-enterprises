@@ -4,29 +4,35 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import CartItem from "./components/CartItem";
 import { cartActions } from "../../store/cartSlice";
+import { toast } from "react-toastify";
 
 const Cart = () => {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart.cart);
   const totalPrice = useSelector((state) => state.cart.totalPrice);
+  const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
+
   console.log(cart);
   console.log(totalPrice);
   return (
     <section>
       <Banner text="Shopping Cart" />
       {cart.length > 0 ? (
-        <div className="px-4 py-16">
+        <div className="px-[10px] sml:px-4 py-10 sml:py-16">
           {/* CART */}
           <div>
             {/* CART TITLE */}
-            <ul className="flex text-[15px] font-semibold justify-between items-center border-b pb-3">
-              <li className="w-[38%]">ITEM</li>
-              <li className="w-[15%]">PRICE</li>
-              <li className="w-[15%]">QTY</li>
-              <li className="w-[20%]">SUBTOTAL</li>
+            <ul
+              className="flex text-[15px] font-semibold justify-between items-center border-b pb-0 lg:pb-3 
+              mb-0 lg:mb-3 bg-[#E6E6E6] lg:bg-transparent"
+            >
+              <li className="w-full p-2 lg:p-0 lg:w-[38%] ">ITEM</li>
+              <li className="w-[15%] hidden lg:block">PRICE</li>
+              <li className="w-[15%] hidden lg:block">QTY</li>
+              <li className="w-[20%] hidden lg:block">SUBTOTAL</li>
             </ul>
             {/* CART ITEMS */}
-            <ul className="text-gray-500 text-[15px]">
+            <ul className="text-gray-500 text-[15px] space-y-3 lg:space-y-0">
               {cart.map((product) => (
                 <CartItem key={product.itemId} product={product} />
               ))}
@@ -46,23 +52,25 @@ const Cart = () => {
               </button>
             </div>
           </div>
-          {/* <CountryStateSelect /> */}
-          <div className="flex justify-between">
-            <div className="space-y-2">
+
+          <div className="flex flex-wrap gap-8 md:gap-0 justify-between">
+            <div className="w-full md:w-fit space-y-2">
               <label htmlFor="discountCode" className="text-sm">
                 Enter Discount Code
               </label>
-              <div className="flex border rounded-full text-sm gap-16 p-[2px] w-fit">
+              <div className="flex flex-wrap gap-4 md:gap-2 w-full">
                 <input
                   id="discountCode"
                   type="text"
-                  className="outline-none rounded-l-full px-2 text-sm bg-transparent"
+                  className="outline-none border w-full md:w-fit p-3 text-sm"
                   placeholder="Enter Discount Code"
                 />
-                <button className="primeBttn">Apply Discount</button>
+                <button className="bg-black text-white w-full md:w-fit p-3">
+                  Apply Discount
+                </button>
               </div>
             </div>
-            <div className="w-[35%] space-y-5">
+            <div className="w-full md:w-[35%] space-y-5">
               <div className="flex justify-between text-gray-500 text-sm">
                 <h1>Sub Total</h1>
                 <h3>₹{Number(totalPrice).toFixed(2)}</h3>
@@ -76,7 +84,14 @@ const Cart = () => {
                 <h3>₹{Number(totalPrice).toFixed(2)}</h3>
               </div>
               <div className="flex justify-end">
-                <Link className="primeBttnWhOut" to="/checkout">
+                <Link
+                  className="primeBttnWhOut"
+                  to={isAuthenticated ? "/checkout" : "/account/sign-in"}
+                  onClick={() => {
+                    !isAuthenticated &&
+                      toast.error("Please Login to proceed with checkout");
+                  }}
+                >
                   Proceed to Checkout
                 </Link>
               </div>

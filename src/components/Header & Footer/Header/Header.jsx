@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
 import logo from "../../../assets/vjp_logo_color.png";
-import { LiaSearchSolid, LiaShoppingCartSolid } from "react-icons/lia";
+import { LiaShoppingCartSolid } from "react-icons/lia";
 import { BiChevronDown, BiChevronUp } from "react-icons/bi";
 import { LuUser2 } from "react-icons/lu";
-import { FiHeart } from "react-icons/fi";
+import { FiHeart, FiMenu } from "react-icons/fi";
 import { navBarData } from "./headerData";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { userActions } from "../../../store/userSlice";
+import { uiActions } from "../../../store/uiSlice";
+import { useMutation } from "react-query";
+import { axiosInstance } from "../../../services/axios";
+import { toast } from "react-toastify";
 
 const Header = () => {
   const [isUserMenuVisible, setIsUserMenuVisible] = useState(false);
@@ -17,12 +21,26 @@ const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
-  console.log(isAuthenticated);
 
   const userMenuHandler = (to) => {
     setIsUserMenuVisible((prevState) => !prevState);
     to && navigate(to);
   };
+
+  const { mutate: logOutUser } = useMutation(
+    () => {
+      axiosInstance.post("user/logout");
+    },
+    {
+      onSuccess: () => {
+        dispatch(userActions.logOutUser());
+        toast.success("Logged Out Successfully");
+      },
+      onError: (err) => {
+        toast.error(onlyText(err?.response.data.message));
+      },
+    }
+  );
 
   useEffect(() => {
     const handleScroll = () => {
@@ -46,28 +64,38 @@ const Header = () => {
           y: headerVisible ? 0 : -100,
         }}
         transition={{ duration: 0.5, ease: "linear" }}
-        className="sticky top-0 left-0 right-0 z-50 bg-white"
+        className="sticky top-0 left-0 right-0 z-40 bg-white centerContainer"
       >
-        <div className="flex justify-between items-center px-6 py-4 border font-light relative">
-          <img src={logo} alt="" className="object-contain w-48" />
-          <ul className="hidden md:flex gap-8 ">
+        <div className="flex justify-between items-center px-4 sml:px-6 py-4 border font-light relative">
+          <button
+            className="lg:hidden scale-[1.5]"
+            onClick={() => dispatch(uiActions.menuBarHanlder())}
+          >
+            <FiMenu />
+          </button>
+          <img
+            src={logo}
+            alt=""
+            className="object-contain w-40 sml:w-48 cursor-pointer"
+            onClick={() => navigate("/")}
+          />
+          <ul className="hidden lgl:flex gap-8">
             {navBarData.map(({ id, path, title }) => (
               <li key={id}>
                 <Link to={path}>{title}</Link>
               </li>
             ))}
           </ul>
-          <div className="flex gap-6">
-            <LiaSearchSolid className="scale-[1.5] cursor-pointer" />
-
-            <div className="relative">
+          <div className="flex gap-[14px] sml:gap-6 ">
+            {/* <LiaSearchSolid className="scale-[1.5] cursor-pointer" /> */}
+            <div className="hidden lg:block relative">
               <div
                 onClick={() =>
                   isAuthenticated
                     ? userMenuHandler()
                     : navigate("/account/sign-in")
                 }
-                className="flex gap-1 items-center"
+                className="flex gap-1 items-center "
               >
                 <LuUser2 className="scale-[1.5] cursor-pointer" />
                 {isAuthenticated &&
@@ -93,7 +121,7 @@ const Header = () => {
                   <li
                     onClick={() => {
                       userMenuHandler();
-                      dispatch(userActions.logOutUser());
+                      logOutUser();
                     }}
                     className="cursor-pointer"
                   >
@@ -103,11 +131,13 @@ const Header = () => {
               )}
             </div>
 
-            <Link to={isAuthenticated ? "/customer/wish-list" : "/account/sign-in"}>
-              <FiHeart className="scale-[1.5] cursor-pointer" />
+            <Link
+              to={isAuthenticated ? "/customer/wish-list" : "/account/sign-in"}
+            >
+              <FiHeart className="scale-[1.3] sml:scale-[1.5] cursor-pointer" />
             </Link>
             <Link to="/cart">
-              <LiaShoppingCartSolid className="scale-[1.7] cursor-pointer" />
+              <LiaShoppingCartSolid className="scale-[1.6] sml:scale-[1.7] cursor-pointer" />
             </Link>
           </div>
         </div>

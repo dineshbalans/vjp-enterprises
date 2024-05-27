@@ -5,25 +5,21 @@ import ProductItem from "./ProductItem";
 import Breadcrumbs from "../General/UI/Breadcrumbs";
 import { toCaptialCase } from "../../utils/helperFunction";
 import Banner from "../General/Banner";
-import { useSelector } from "react-redux";
+import MultiSelect from "../General/MultiSelect";
 
-const ProductList = ({ productInfo, category, subCategory }) => {
-  const products = useSelector((state) => state.product.products);
-  console.log(productInfo);
-  console.log(products);
-
-  const filteredProductsByCategory = subCategory
-    ? productInfo?.items?.filter(
-        (product) => product.subCategory === subCategory
-      )
-    : productInfo?.items;
-
-  console.log(filteredProductsByCategory);
-
-  const productLength = filteredProductsByCategory?.length;
-
+const ProductList = ({ products, category, subCategory }) => {
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
-  console.log("currentPageNumber : " + currentPageNumber);
+  const [selectedSubCategory, setSelectedSubCategory] = useState("" || []);
+
+  const filteredProductsBySubCategory = selectedSubCategory.length
+    ? products?.items?.filter((product) =>
+        selectedSubCategory.find(
+          (sbCtgry) => sbCtgry._id === product.subCategoryId
+        )
+      )
+    : products?.items;
+  const productLength = filteredProductsBySubCategory?.length;
+
   const itemsPerpage = 8;
   const startIndex = (currentPageNumber - 1) * itemsPerpage;
   const endIndex = currentPageNumber * itemsPerpage;
@@ -33,49 +29,60 @@ const ProductList = ({ productInfo, category, subCategory }) => {
     setCurrentPageNumber(1);
   }, [category]);
 
+  console.log(selectedSubCategory);
+  console.log(filteredProductsBySubCategory);
+  console.log(filteredProductsBySubCategory.length);
+  console.log("currentPageNumber : " + currentPageNumber);
+  console.log("products : " + products);
+  console.log(products);
+  console.log(subCategory);
+
   return (
     <>
       <Banner
         text={toCaptialCase(category)}
-        desc={productInfo?.description}
-        style="py-24"
+        desc={products?.description}
+        style="py-40 sml:py-32 lg:py-24"
       />
       <Breadcrumbs currentPage={[{ text: toCaptialCase(category) }]} />
       <section className="px-5 mdl:px-10  py-10 pt-10">
-        {/* Product Title */}
-        <h1 className="text-4xl sml:text-6xl text-primary font-semibold pb-10 hidden">
-          {productInfo?.title}
-        </h1>
-
-        {/* Product Description */}
-        <p className="leading-7 text-justify sml:text-left hidden">
-          {productInfo?.description}
-        </p>
         <div>
-          <div className="flex justify-between py-6 text-gray-800">
-            <h4>
+          <div
+            className="flex flex-wrap gap-3 md:gap-0 items-center justify-between
+          pb-10 md:py-6 text-gray-800"
+          >
+            <h4 className="w-full md:w-fit text-center ">
               {productLength > 7
                 ? `Showing ${
                     startIndex + 1
                   }–${endIndex} of ${productLength} results`
                 : `Showing all ${productLength} results`}
             </h4>
-            <h4 className="hidden sml:flex items-center gap-2">
-              <span>Default Sorting</span>
-              <BsChevronDown className="" />
-            </h4>
+
+            <MultiSelect
+              options={subCategory}
+              selectedOption={selectedSubCategory}
+              setSelectedOption={setSelectedSubCategory}
+              className="w-full md:w-[40%] lg:w-1/4 text-[15px]"
+            />
           </div>
-          <ul className="flex flex-wrap justify-center items-stretch gap-5">
-            {filteredProductsByCategory
-              ?.slice(startIndex, endIndex)
-              ?.map((product) => (
-                <ProductItem
-                  key={product.itemId}
-                  category={category}
-                  product={product}
-                />
-              ))}
-          </ul>
+          {productLength ? (
+            <ul className="flex flex-wrap justify-center items-stretch gap-5">
+              {filteredProductsBySubCategory
+                ?.slice(startIndex, endIndex)
+                ?.map((product) => (
+                  <ProductItem
+                    key={product._id}
+                    category={category}
+                    product={product}
+                  />
+                ))}
+            </ul>
+          ) : (
+            <p className="flex justify-center items-center py-5">
+              No Product(s) is associated with the selected Subcategory(s)
+            </p>
+          )}
         </div>
         {productLength > 7 && (
           <Pagination
@@ -91,3 +98,25 @@ const ProductList = ({ productInfo, category, subCategory }) => {
 };
 
 export default ProductList;
+
+// Select
+{
+  /* <Select
+              options={options}
+              onChange={(val) => console.log(val)}
+              isMulti
+            />
+            <select
+              name="subCategory"
+              id=""
+              onChange={(e) => {
+                // alert(e.target.value);
+              }}
+            >
+              <option defaultValue={""}>Please Select a Sub Category</option>
+              {subCategory &&
+                subCategory?.map((subCategory) => (
+                  <option value={subCategory._id}>{subCategory.name}</option>
+                ))}
+            </select> */
+}

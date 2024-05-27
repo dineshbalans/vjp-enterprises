@@ -11,19 +11,19 @@ const WishList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const wishListItems = useSelector((state) => state.wishlist.items);
+
   return (
     <>
       {wishListItems.length > 0 ? (
         <div>
           <ul className="flex flex-wrap">
             {wishListItems.map((product) => (
-              <WishListItem key={product.itemId} product={product} />
+              <WishListItem key={product._id} product={product} />
             ))}
           </ul>
-          <div className="flex items-center gap-3">
-            <button className="secondaryBttn">Update Wish List</button>
+          <div className="flex flex-wrap md:flex-nowrap items-center gap-3">
             <button
-              className="secondaryBttn"
+              className="secondaryBttn w-full md:w-fit"
               onClick={() => {
                 dispatch(wishListActions.clearWishList());
                 window.scrollTo(0, 0);
@@ -32,15 +32,25 @@ const WishList = () => {
               Clear Wish List
             </button>
             <button
-              className="primaryBttn"
+              className="primaryBttn w-full md:w-fit"
               onClick={() => {
-                dispatch(cartActions.addAllProducts(wishListItems));
+                dispatch(
+                  cartActions.addAllProducts(
+                    wishListItems.map((product) => ({
+                      ...product,
+                      productQuantity: 1,
+                    }))
+                  )
+                );
                 navigate("/cart");
               }}
             >
               Add All To Cart
             </button>
-            <Link className="primaryBttn" to="/cart">
+            <Link
+              className="primaryBttn w-full md:w-fit text-center"
+              to="/cart"
+            >
               Go To Cart
             </Link>
           </div>

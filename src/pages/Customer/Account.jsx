@@ -5,8 +5,8 @@ const Account = () => {
     <div className="space-y-7">
       <div className="border p-7 space-y-4 pb-11">
         <h1 className="text-2xl font-bold text-lblack">Account Information</h1>
-        <div className="flex ">
-          <div className="text-gray-500 text-[15px] space-y-1 w-1/2">
+        <div className="flex flex-wrap gap-5 lg:gap-0">
+          <div className="text-gray-500 text-[15px] space-y-1 w-full lg:w-1/2">
             <h1 className="text-lblack text-lg font-semibold mb-2">
               Contact Information
             </h1>
@@ -25,8 +25,8 @@ const Account = () => {
       </div>
       <div className="border p-7 space-y-4 pb-11">
         <h1 className="text-2xl font-bold text-lblack">Address Book </h1>
-        <div className="flex ">
-          <div className="text-gray-500 text-[15px] space-y-1 w-1/2">
+        <div className="flex flex-wrap gap-5 lg:gap-0">
+          <div className="text-gray-500 text-[15px] space-y-1 w-full lg:w-1/2">
             <h1 className="text-lblack text-lg font-semibold mb-2">
               Default Billing Address
             </h1>

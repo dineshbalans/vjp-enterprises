@@ -1,35 +1,44 @@
 import React from "react";
-import { useParams, useRouteLoaderData } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import ProductList from "../../components/Product/ProductList";
 
 const CategoryPage = () => {
   const { category } = useParams();
-  // const data = useRouteLoaderData("products");
-  const dispatch = useDispatch();
-  const products = useSelector((state) => state.product.products);
-  const subCategory = useSelector((state) => state.product.subCategory);
 
-  const info = products?.filter((item) =>
-    item.category === category ? item : null
+  const allProducts = useSelector((state) => state.product.products);
+
+  const categorizedProducts = allProducts?.find(
+    (product) => product.category === category
   );
 
-  const allProductItems = [];
-  if (category === "all-products") {
-    products.forEach((product) => allProductItems.push(...product.items));
+  let subCategory = categorizedProducts?.subCategorys;
 
-    const allProductObjCopy = { ...info[0] };
-    allProductObjCopy.items = allProductItems;
-    info[0] = allProductObjCopy;
+  const allProductCategoryObject = {
+    subCategorys: false,
+    description:
+      "Explore our extensive product selection, where innovation meets convenience. From high-tech gadgets and essential appliances to smart home devices and entertainment equipment, we have everything you need to elevate your lifestyle. Find top-quality solutions for your home and stay ahead of the curve with our diverse range of products.",
+    category: "all-products",
+    title: "All Products",
+    items: [],
+  };
+
+  // console.log(category);
+  // console.log(allProducts);
+  // console.log(subCategory);
+  // console.log(categorizedProducts);
+
+  if (!categorizedProducts) {
+    allProducts.forEach((product) =>
+      allProductCategoryObject.items.push(...product.items)
+    );
   }
-
-  // useEffect(() => {
-  //   data && dispatch(productActions.addProducts(data));
-  // }, []);
 
   return (
     <ProductList
-      productInfo={info[0]}
+      products={
+        categorizedProducts ? categorizedProducts : allProductCategoryObject
+      }
       category={category}
       subCategory={subCategory}
     />
@@ -37,3 +46,24 @@ const CategoryPage = () => {
 };
 
 export default CategoryPage;
+
+// let info = allProducts?.filter((item) =>
+//   item.category === category ? item : []
+// );
+// console.log("Info :" + info);
+
+// let allProductItems = [];
+// if (category === "all-products") {
+//   allProducts.forEach((product) => allProductItems.push(...product.items));
+
+//   const allProductObjCopy = { ...info[0] };
+//   console.log(allProductItems);
+//   allProductObjCopy.items = allProductItems;
+//   info[0] = allProductObjCopy;
+// } else {
+//   allProductItems = allProducts.find(
+//     (product) => product.category === category
+//   )?.items;
+// }
+
+// console.log(allProductItems);

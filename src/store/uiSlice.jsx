@@ -6,6 +6,7 @@ const uiSlice = createSlice({
     modal: {
       wishListSignInModal: false,
       productDetailModal: false,
+      showMenuBar: false,
       product: {},
     },
   },
@@ -23,6 +24,11 @@ const uiSlice = createSlice({
         : "hidden";
       state.modal.product = payload;
       state.modal.productDetailModal = !state.modal.productDetailModal;
+    },
+
+    menuBarHanlder(state) {
+      document.body.style.overflow = state.showMenuBar ? "" : "hidden";
+      state.showMenuBar = !state.showMenuBar;
     },
   },
 });

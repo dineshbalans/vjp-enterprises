@@ -7,11 +7,15 @@ import { IoCheckmarkOutline } from "react-icons/io5";
 import { redirect, useNavigate } from "react-router-dom";
 import { userActions } from "../../../store/userSlice";
 import { useDispatch } from "react-redux";
+import { useMutation } from "react-query";
+import { axiosInstance } from "../../../services/axios";
+import { toast } from "react-toastify";
+import { onlyText } from "../../../utils/helperFunction";
 
 const initialValue = {
   isValid: { isError: "" },
-  email: { value: "", isError: "" },
-  pswd: { value: "", isError: "" },
+  email: { value: "dineshbalansrinivasan@gmail.com", isError: "" },
+  pswd: { value: "Balan@1582", isError: "" },
   showPswd: { value: false, isError: "" },
 };
 
@@ -74,6 +78,22 @@ const SignIn = () => {
   const navigate = useNavigate();
   const [signInForm, dispatch] = useReducer(reducer, initialValue);
 
+  const { mutate: loginUser } = useMutation(
+    (data) => axiosInstance.post("/user/login", data),
+    {
+      onSuccess: (res) => {
+        console.log(res.data);
+        toast.success(onlyText(res.data.message));
+        dispatchRedux(userActions.loginUser());
+        dispatchRedux(userActions.setUser(res.data.user));
+        navigate("/");
+      },
+      onError: (err) => {
+        toast.error(onlyText(err?.response.data.message));
+      },
+    }
+  );
+
   const signInFormHandler = () => {
     if (
       signInForm.email.value.trim().length === 0 &&
@@ -109,16 +129,19 @@ const SignIn = () => {
       });
     } else {
       console.log(signInForm);
-      dispatchRedux(userActions.loginUser());
-      navigate("/customer/account");
+      loginUser({
+        email: signInForm.email.value.trim(),
+        pswd: signInForm.pswd.value.trim(),
+      });
+      // navigate("/customer/account");
     }
   };
 
   return (
-    <div>
+    <div className="min-h-screen">
       <Banner text="Customer Login" />
-      <div className="py-14 flex justify-center  gap-6 divide-x">
-        <div className="w-[36%] p-6 space-y-8 h-fit">
+      <div className="py-14 flex flex-wrap justify-center gap-6 divide-x border">
+        <div className="w-full lg:w-[36%] p-6 space-y-8 h-fit">
           <div className="space-y-5">
             <h1 className="text-lg font-semibold text-ternary">
               Registered Customers
@@ -188,7 +211,7 @@ const SignIn = () => {
             </div>
           </form>
         </div>
-        <div className=" w-[36%] p-6 space-y-8 pl-12">
+        <div className="w-full lg:w-[36%] p-6 space-y-8 lg:pl-12">
           <div className="space-y-5">
             <h1 className="text-lg font-semibold text-ternary">
               Create an Account

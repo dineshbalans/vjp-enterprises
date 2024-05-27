@@ -1,8 +1,10 @@
 import React, { useReducer } from "react";
-import Input, { LabelText } from "../../../components/General/Input";
-import ImageUploader from "../components/ImageUploader";
-import HighlightsForm from "../components/HighlightsForm";
-import SlctSubCtgry from "../components/SlctSubCtgry";
+import Input, { LabelText } from "../../../../components/General/Input";
+import ImageUploader from "./components/ImageUploader";
+import HighlightsForm from "./components/HighlightsForm";
+import SlctSubCtgry from "./components/SlctSubCtgry";
+import { useMutation, useQueryClient } from "react-query";
+import { axiosInstance } from "../../../../services/axios";
 
 const initialState = {
   pName: { value: "", error: "" },
@@ -155,11 +157,70 @@ const reducer = (prevState, action) => {
 };
 
 const AddProduct = () => {
+  const queryClient = useQueryClient();
   const [product, dispatch] = useReducer(reducer, initialState);
+
+  const { mutate: createProduct } = useMutation(
+    (productData) =>
+      axiosInstance.post("/item/create", productData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }),
+    {
+      onSuccess: (res) => {
+        console.log(res.data);
+        queryClient.invalidateQueries(["category"]);
+      },
+      onError: (error) => console.log(error),
+    }
+  );
 
   const submitHandler = (e) => {
     e.preventDefault();
     console.log(product);
+    console.log(JSON.stringify(product.pHighlts.value));
+
+    const formData = new FormData();
+    formData.append("itemTitle", product.pName.value);
+    formData.append("itemDescription", product.pDesc.value);
+    formData.append("images", product.pImg.value);
+    formData.append("stock", product.pStock.value);
+    formData.append(
+      "subCategory",
+      product.pCtgry.value && product.pSbCtgry.value
+        ? `${product.pCtgry.value}/${product.pSbCtgry.value}`
+        : ""
+    );
+    formData.append("isSale", product.pSale.value);
+    formData.append("isTrending", product.pTrend.value);
+    formData.append("actualPrice", product.pPrice.value);
+    formData.append("discountPercentage", product.pDiscPer.value);
+    formData.append("highlights", JSON.stringify(product.pHighlts.value));
+
+    product.pImg.value.forEach((image, index) => {
+      formData.append(`images`, image);
+    });
+
+    // const productData = {
+    //   itemTitle: product.pName.value,
+    //   itemDescription: product.pDesc.value,
+    //   images: product.pImg.value,
+    //   stock: +product.pStock.value,
+    //   // category: product.pCtgry.value,
+    //   subCategory:
+    //     product.pCtgry.value && product.pSbCtgry.value
+    //       ? `${product.pCtgry.value}/${product.pSbCtgry.value}`
+    //       : "",
+    //   isSale: product.pSale.value,
+    //   isTrending: product.pTrend.value,
+    //   actualPrice: +product.pPrice.value,
+    //   discountPercentage: +product.pDiscPer.value,
+    //   highlights: product.pHighlts.value,
+    // };
+    console.log(product);
+    console.log(formData);
+    createProduct(formData);
     alert("Product Added Successfully");
   };
   return (
@@ -342,7 +403,11 @@ const AddProduct = () => {
             htmlFor="pHighlts"
             error={product.pHighlts.error["index"]}
           />
-          <HighlightsForm dispatch={dispatch} error={product.pHighlts.error} />
+          <HighlightsForm
+            dispatch={dispatch}
+            error={product.pHighlts.error}
+            role="CREATE"
+          />
         </div>
 
         {/* Product Count (Stock) : input */}

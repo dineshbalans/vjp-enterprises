@@ -1,13 +1,35 @@
-import React, { useState } from "react";
-import { LabelText } from "../../../components/General/Input";
+import React, { useEffect, useState } from "react";
+import { LabelText } from "../../../../../components/General/Input";
 
 const ImageUploader = ({ img, dispatch, id, error }) => {
-  const [images, setImages] = useState(img);
+  const [images, setImages] = useState([]);
+
+  useEffect(() => {
+    img?.length > 0 && setImages(img);
+  }, [img]);
 
   const handleImageChange = (e) => {
     const selectedImages = Array.from(e.target.files);
-    setImages([...images, ...selectedImages]);
-    dispatch({ type: `${id}Val`, payload: [...images, ...selectedImages] });
+
+    selectedImages.forEach((file) => {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        if (reader.readyState === 2) {
+          setImages([...images, ...selectedImages]);
+          dispatch({
+            type: `${id}Val`,
+            payload: [...images, ...selectedImages],
+          });
+        }
+      };
+
+      reader.readAsDataURL(file);
+    });
+
+    // const selectedImages = Array.from(e.target.files);
+    // setImages([...images, ...selectedImages]);
+    // dispatch({ type: `${id}Val`, payload: [...images, ...selectedImages] });
   };
 
   const handleImageClick = (index) => {
@@ -30,6 +52,7 @@ const ImageUploader = ({ img, dispatch, id, error }) => {
         <span>Upload Images</span>
         <input
           id={id}
+          name="images"
           type="file"
           multiple
           onChange={handleImageChange}
@@ -47,7 +70,7 @@ const ImageUploader = ({ img, dispatch, id, error }) => {
         {images.map((image, index) => (
           <div key={index} className="w-1/4 p-2">
             <img
-              src={URL.createObjectURL(image)}
+              src={image instanceof File ? URL.createObjectURL(image) : image}
               alt={`Image ${index}`}
               className="w-full cursor-pointer"
               onClick={() => handleImageClick(index)}

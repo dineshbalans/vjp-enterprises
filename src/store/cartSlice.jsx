@@ -20,7 +20,7 @@ const cartSlice = createSlice({
         state.cart = [payload];
       } else {
         const productIndex = state.cart.findIndex(
-          (product) => product.itemId === payload.itemId
+          (product) => product._id === payload._id
         );
         if (productIndex === -1) {
           state.cart = [...state.cart, payload];
@@ -32,7 +32,7 @@ const cartSlice = createSlice({
     // REMOVE PRODUCT FROM THE CART BY ID
     removeProduct(state, { payload }) {
       const productIndex = state.cart.findIndex(
-        (product) => product.itemId === payload
+        (product) => product._id === payload
       );
 
       state.totalPrice -=
@@ -45,7 +45,7 @@ const cartSlice = createSlice({
     // INCREASE PRODUCT QUANTITY BY 1 USING ID
     increaseProductQuantity(state, { payload }) {
       const productIndex = state.cart.findIndex(
-        (product) => product.itemId === payload
+        (product) => product._id === payload
       );
 
       state.totalPrice += +state.cart[productIndex].actualPrice;
@@ -56,7 +56,7 @@ const cartSlice = createSlice({
     // DECREASE PRODUCT QUANTITY BY 1 USING ID
     decreaseProductQuantity(state, { payload }) {
       const productIndex = state.cart.findIndex(
-        (product) => product.itemId === payload
+        (product) => product._id === payload
       );
 
       state.totalPrice -= +state.cart[productIndex].actualPrice;
@@ -70,7 +70,7 @@ const cartSlice = createSlice({
     // ADD PRODUCT BY QUANTITY : NEVER USED ANYWHERE IN THE CODE
     addProductByQuantity(state, { payload }) {
       const productIndex = state.cart.findIndex(
-        (product) => product.itemId === payload.itemId
+        (product) => product._id === payload._id
       );
       if (payload.productQuantity === 0) {
         return;
@@ -102,7 +102,7 @@ const cartSlice = createSlice({
 
     setProductQuantity(state, { payload }) {
       const productIndex = state.cart.findIndex(
-        (product) => product.itemId === payload.itemId
+        (product) => product._id === payload._id
       );
       state.cart[productIndex].productQuantity = payload.productQuantity;
     },
@@ -119,7 +119,7 @@ const cartSlice = createSlice({
         state.noOfProducts += +product.productQuantity;
 
         const productIndex = state.cart.findIndex(
-          (item) => item.itemId === product.itemId
+          (item) => item._id === product._id
         );
         if (productIndex === -1) {
           state.cart = [...state.cart, product];
