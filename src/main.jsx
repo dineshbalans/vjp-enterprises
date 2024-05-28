@@ -41,6 +41,8 @@ import SubCategory from "./pages/Admin/pages/SubCategory/SubCategory.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import OrderSuccess from "./pages/OrderSuccess.jsx";
+import ForgetPassword from "./pages/Password/ForgetPassword.jsx";
+import ResetPassword from "./pages/Password/ResetPassword.jsx";
 
 const routes = createBrowserRouter([
   // User
@@ -93,6 +95,7 @@ const routes = createBrowserRouter([
           },
         ],
       },
+      // User
       {
         path: "customer",
         element: <UserLayout />,
@@ -137,7 +140,25 @@ const routes = createBrowserRouter([
       },
       {
         path: "order-success",
-        element: <OrderSuccess />
+        element: <OrderSuccess />,
+      },
+      {
+        path: "password",
+        children: [
+          {
+            path: "reset",
+            children: [
+              {
+                index: true,
+                element: <ForgetPassword />,
+              },
+              {
+                path: ":token",
+                element: <ResetPassword />,
+              },
+            ],
+          },
+        ],
       },
     ],
   },

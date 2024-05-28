@@ -1,5 +1,12 @@
 import React, { useReducer } from "react";
 import Input, { LabelText } from "../../components/General/Input";
+import { useDispatch, useSelector } from "react-redux";
+import { useMutation } from "react-query";
+import { axiosInstance } from "../../services/axios";
+import { toast } from "react-toastify";
+import { onlyText } from "../../utils/helperFunction";
+import { userActions } from "../../store/userSlice";
+import { Link } from "react-router-dom";
 
 const initialArg = {
   fName: { value: "", error: "" },
@@ -154,81 +161,55 @@ const reducer = (prevState, action) => {
 };
 
 const AccountInfo = () => {
+  const rdxDispatch = useDispatch();
   const [user, dispatch] = useReducer(reducer, initialArg);
+  const userInfo = useSelector((state) => state.user.user);
 
-  const submitHandler = (event) => {
-    event.preventDefault();
-    console.log(user);
+  const { mutate: updateUsersPassword } = useMutation(
+    (data) => axiosInstance.put(`user/email-password/update`, data),
+    {
+      onSuccess: (res) => {
+        dispatch({ type: "RESET" });
+        toast.success("Password Updated Successfully");
+        rdxDispatch(userActions.logOutUser());
+      },
+      onError: (err) => toast.error(onlyText(err?.response.data.message)),
+    }
+  );
+
+  const saveHandler = () => {
+    const updatedPassword = {
+      type: "password",
+      pswd: user.currentPswd.value,
+      newPassword: user.newPswd.value,
+      confirmPassword: user.confirmNewPswd.value,
+    };
+    console.log(updatedPassword);
+    updateUsersPassword(updatedPassword);
   };
   return (
-    <form className="border p-7 space-y-4 pb-11" onSubmit={submitHandler}>
+    <form className="border p-7 space-y-4 pb-11">
       <div className="space-y-5">
         <h1 className="text-xl text-lblack pb-3">Account Information</h1>
-        {/* First Name */}
+
+        {/* Email */}
         <div>
           <LabelText
-            text="First Name"
+            text="Email"
             className="text-gray-600 text-[15px] pb-1"
-            htmlFor="fName"
-            error={user.fName.error}
+            htmlFor="email"
+            error={user.email.error}
           />
           <Input
             className="text-gray-600 text-sm pb-2 pt-2"
-            id="fName"
-            dispatch={dispatch}
-            value={user.fName.value}
-            isError={user.fName.error}
+            id="email"
+            value={userInfo.email}
+            disabled
           />
         </div>
-        {/* Last Name */}
-        <div>
-          <LabelText
-            text="Last Name"
-            className="text-gray-600 text-[15px] pb-1"
-            htmlFor="lName"
-            error={user.lName.error}
-          />
-          <Input
-            className="text-gray-600 text-sm pb-2 pt-2"
-            id="lName"
-            dispatch={dispatch}
-            value={user.lName.value}
-            isError={user.lName.error}
-          />
-        </div>
-        {/* Last Name */}
-        <div>
-          <LabelText
-            text="Last Name"
-            className="text-gray-600 text-[15px] pb-1"
-            htmlFor="lName"
-            error={user.lName.error}
-          />
-          <Input
-            className="text-gray-600 text-sm pb-2 pt-2"
-            id="lName"
-            dispatch={dispatch}
-            value={user.lName.value}
-            isError={user.lName.error}
-          />
-        </div>
-        {/* CheckBox: Change Email */}
-        <div className="flex  items-center gap-2">
-          <input
-            type="checkbox"
-            id="chngeEmail"
-            checked={user.changeEmail.value}
-            onChange={() => dispatch({ type: "changeEmailVal" })}
-          />
-          <LabelText
-            text="Change Email"
-            htmlFor="chngeEmail"
-            isMandatory={false}
-            className="text-gray-600 text-[15px] pb-0"
-          />
-        </div>
+
         {/* CheckBox: Change Password */}
-        <div className="flex  items-center gap-2">
+        <div className="flex  items-baseline gap-2 ">
           <input
             type="checkbox"
             id="chngePswd"
@@ -239,7 +220,7 @@ const AccountInfo = () => {
             text="Change Password"
             htmlFor="chngePswd"
             isMandatory={false}
-            className="text-gray-600 text-[15px] pb-0"
+            className="text-gray-600 text-[15px] pb-0 -translate-y-[1px]"
           />
         </div>
 
@@ -326,7 +307,7 @@ const AccountInfo = () => {
               </>
             )}
             {/* CheckBox: Show Password */}
-            <div className="flex  items-center gap-2">
+            <div className="flex  items-baseline gap-2">
               <input
                 type="checkbox"
                 id="showPswd"
@@ -337,15 +318,43 @@ const AccountInfo = () => {
                 text="Show Password"
                 htmlFor="showPswd"
                 isMandatory={false}
-                className="text-gray-600 text-[15px] pb-0"
+                className="text-gray-600 text-[15px] pb-0 -translate-y-[2px]"
               />
+            </div>
+            {/* Forget Password */}
+            <div>
+              <Link to="/password/reset" className="txt">
+                Forget Password ? Click here
+              </Link>
             </div>
           </div>
         )}
-        <button className="primaryBttn">Save</button>
+        {user.changePswd.value && (
+          <button className="primaryBttn" onClick={saveHandler} type="button">
+            Save
+          </button>
+        )}
       </div>
     </form>
   );
 };
 
 export default AccountInfo;
+
+{
+  /* CheckBox: Change Email
+        <div className="flex  items-center gap-2">
+          <input
+            type="checkbox"
+            id="chngeEmail"
+            checked={user.changeEmail.value}
+            onChange={() => dispatch({ type: "changeEmailVal" })}
+          />
+          <LabelText
+            text="Change Email"
+            htmlFor="chngeEmail"
+            isMandatory={false}
+            className="text-gray-600 text-[15px] pb-0"
+          />
+        </div> */
+}

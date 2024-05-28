@@ -4,7 +4,7 @@ import Banner from "../../../components/General/Banner";
 import { LuAsterisk } from "react-icons/lu";
 import { signInData } from "./data/signInData";
 import { IoCheckmarkOutline } from "react-icons/io5";
-import { redirect, useNavigate } from "react-router-dom";
+import { Link, redirect, useNavigate } from "react-router-dom";
 import { userActions } from "../../../store/userSlice";
 import { useDispatch } from "react-redux";
 import { useMutation } from "react-query";
@@ -201,12 +201,13 @@ const SignIn = () => {
                   <LuAsterisk className="scale-90" />
                   <h6 className="text-sm">Required Fields</h6>
                 </div>
-                <h3
+                <Link
                   className="text-gray-500 transition-all ease-linear hover:text-primary
                 cursor-pointer text-sm"
+                  to="/password/reset"
                 >
                   Forgot Your Password?
-                </h3>
+                </Link>
               </div>
             </div>
           </form>

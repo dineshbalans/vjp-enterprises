@@ -14,6 +14,7 @@ import { userActions } from "../../store/userSlice";
 import { useMutation } from "react-query";
 import { axiosInstance } from "../../services/axios";
 import { toast } from "react-toastify";
+import { onlyText } from "../../utils/helperFunction";
 
 const ProductItem = ({ cardSize, category, product }) => {
   const dispatch = useDispatch();
@@ -137,30 +138,47 @@ const ModelSignup = ({ product }) => {
     (state) => state.ui.modal.wishListSignInModal
   );
 
+  const { mutate: loginUser } = useMutation(
+    (data) => axiosInstance.post("/user/login", data),
+    {
+      onSuccess: (res) => {
+        toast.success(onlyText(res.data.message));
+        dispatch(uiActions.wishListSignInModalHandler());
+        dispatch(userActions.loginUser());
+        dispatch(userActions.setUser(res.data.user));
+        navigate("/");
+      },
+      onError: (err) => {
+        toast.error(onlyText(err?.response.data.message));
+      },
+    }
+  );
+
   const submitHandler = (e) => {
-    console.log(product);
     e.preventDefault();
-    console.log({ email, password });
-    dispatch(userActions.loginUser());
-    dispatch(uiActions.wishListSignInModalHandler());
-    // dispatch(
-    //   wishListActions.addToWishList({
-    //     ...product,
-    //     productQuantity: 1,
-    //   })
-    // );
-    // navigate("/customer/wish-list");
-    navigate("/");
+    loginUser({
+      email: email.trim(),
+      pswd: password.trim(),
+    });
   };
 
   return (
     <>
       {wishListSignInModal && (
         <Modal isOpen={wishListSignInModal}>
-          <div className="flex gap-2 w-full justify-center items-start z-[100]">
-            <div className="bg-white border w-[30%]">
-              <h1 className="text-lg font-medium p-3 border-b">SIGN IN</h1>
-              <div className="p-7">
+          <div className="flex gap-2 w-full justify-center items-start z-[100] px-3">
+            <div className="bg-white border ">
+              <div className="border-b flex justify-between items-center p-3">
+                <h1 className="text-lg font-medium ">SIGN IN</h1>
+                <AiOutlineClose
+                  className=" md:hidden scale-150 cursor-pointer
+              duration-300 transition-all ease-linear "
+                  onClick={() =>
+                    dispatch(uiActions.wishListSignInModalHandler())
+                  }
+                />
+              </div>
+              <div className="p-5 md:p-7">
                 <form
                   action=""
                   className="flex flex-col gap-10"
@@ -183,9 +201,16 @@ const ModelSignup = ({ product }) => {
                       className="border outline-none p-2 text-sm focus:border-black w-full"
                       placeholder="Password"
                     />
-                    <div className="text-sm text-gray-500 text-right">
+                    <button
+                      className="text-sm text-gray-500 text-right"
+                      onClick={() => {
+                        // document.body.style.overflow = "";
+                        dispatch(uiActions.wishListSignInModalHandler());
+                        navigate("/password/reset");
+                      }}
+                    >
                       Forget Your password?
-                    </div>
+                    </button>
                   </div>
                   <div className="space-y-4">
                     <button className="text-white bg-primary text-sm font-medium w-full p-[10px]">
@@ -193,7 +218,10 @@ const ModelSignup = ({ product }) => {
                     </button>
                     <button
                       className="text-white bg-ternary text-sm font-medium w-full p-[10px]"
-                      onClick={() => navigate("/account/sign-up")}
+                      onClick={() => {
+                        dispatch(uiActions.wishListSignInModalHandler());
+                        navigate("/account/sign-up");
+                      }}
                     >
                       Create an Account
                     </button>
@@ -202,11 +230,11 @@ const ModelSignup = ({ product }) => {
               </div>
             </div>
             <button
-              className="bg-ternary h-fit p-3 cursor-pointer group/close"
+              className="bg-ternary hidden md:block h-fit p-3 cursor-pointer group/close"
               onClick={() => dispatch(uiActions.wishListSignInModalHandler())}
             >
               <AiOutlineClose
-                className="text-white scale-150 group-hover/close:rotate-180
+                className="text-white  scale-150 group-hover/close:rotate-180
               duration-300 transition-all ease-linear"
               />
             </button>

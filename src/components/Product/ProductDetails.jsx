@@ -12,6 +12,7 @@ import { cartActions } from "../../store/cartSlice";
 import { wishListActions } from "../../store/wishListSlice";
 import { useMutation } from "react-query";
 import { axiosInstance } from "../../services/axios";
+import { userActions } from "../../store/userSlice";
 
 const ProductDetails = ({
   product,
@@ -55,6 +56,9 @@ const ProductDetails = ({
         console.log(res);
         dispatch(
           itemExistsInWishList
+          // userActions.removeFromWishList(product?._id)
+          // userActions.addToWishList(product)
+
             ? wishListActions.removeFromWishList(product?._id)
             : wishListActions.addToWishList(product)
         );

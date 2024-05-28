@@ -24,9 +24,9 @@ export const userLayoutData = [
     text: "Account Information",
     path: "/account-information",
   },
-  {
-    id: "usdId_6",
-    text: "Logout",
-    path: "/log-out",
-  },
+  // {
+  //   id: "usdId_6",
+  //   text: "Logout",
+  //   path: "/log-out",
+  // },
 ];
