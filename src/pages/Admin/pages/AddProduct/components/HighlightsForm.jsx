@@ -95,7 +95,7 @@ const HighlightsForm = ({ dispatch, error, init, role }) => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form>
         {highlights?.map((highlight, index) => (
           <div key={index} className="mb-4 flex gap-2">
             <input
@@ -149,13 +149,13 @@ const HighlightsForm = ({ dispatch, error, init, role }) => {
             </button>
           </div>
         ))}
-        <button
+        {/* <button
           type="button"
           onClick={handleSubmit}
           className="bg-green-500 text-white px-4 py-2 rounded-md mr-2"
         >
           Submit
-        </button>
+        </button> */}
         <button
           type="button"
           onClick={handleAddHighlight}
