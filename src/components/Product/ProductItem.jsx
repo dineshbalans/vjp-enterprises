@@ -135,6 +135,8 @@ const ProductItem = ({ cardSize, category, product }) => {
                 ? processWishList(product?._id)
                 : dispatch(uiActions.wishListSignInModalHandler())
             }
+            onMouseEnter={reDirectHandler}
+            onMouseLeave={reDirectHandler}
           >
             <LuHeart
               className={`scale-115 hover:text-pink-600 transition-all ease-linear ${
@@ -156,7 +158,7 @@ const ProductItem = ({ cardSize, category, product }) => {
           }/${product?._id}`}
           // to={`${_id}`}
           className="text-[15px] font-medium text-ternary hover:text-pink-500
-                  transition-all ease-linear cursor-pointer"
+                  transition-all ease-linear cursor-pointer capitalize"
         >
           {product?.itemTitle}
         </Link>
