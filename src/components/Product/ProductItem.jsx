@@ -84,21 +84,23 @@ const ProductItem = ({ cardSize, category, product }) => {
             </button>
             <button
               className="group/cart bg-white hover:bg-black p-[15px] rounded-full transition-all ease-linear"
-              onClick={() =>
-                product &&
-                dispatch(
-                  cartActions.addProduct({
-                    ...product,
-                    actualPrice: product?.discountPercentage
-                      ? getDiscountedPrice(
-                          product?.actualPrice,
-                          product?.discountPercentage
-                        )
-                      : product?.actualPrice,
-                    productQuantity: 1,
-                  })
-                )
-              }
+              onClick={() => {
+                if (product) {
+                  dispatch(
+                    cartActions.addProduct({
+                      ...product,
+                      actualPrice: product?.discountPercentage
+                        ? getDiscountedPrice(
+                            product?.actualPrice,
+                            product?.discountPercentage
+                          )
+                        : product?.actualPrice,
+                      productQuantity: 1,
+                    })
+                  );
+                  toast.success("Product Added to Cart!");
+                }
+              }}
             >
               <LuShoppingCart className="scale-[1.3] group-hover/cart:text-white" />
             </button>
@@ -137,11 +139,11 @@ const ProductItem = ({ cardSize, category, product }) => {
         <p className="text-[13px] font-medium">
           {product?.discountPercentage ? (
             <span className="flex items-center gap-1">
-              <span className="line-through">{`₹${
+              <span className="line-through">₹{product?.actualPrice}</span>{" "}
+              <span className="text-primary">{`₹${
                 product?.actualPrice -
                 (product?.actualPrice * product?.discountPercentage) / 100
-              }`}</span>{" "}
-              <span className="text-primary">₹{product?.actualPrice}</span>
+              }`}</span>
             </span>
           ) : (
             <span className="text-primary">{`₹ ${product?.actualPrice}`}</span>

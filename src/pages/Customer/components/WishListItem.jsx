@@ -56,7 +56,7 @@ const WishListItem = ({ product }) => {
       <div className="flex items-center justify-between mdl:block space-y-3">
         <button
           className="text-white   bg-primary font-semibold px-5 py-[6px] rounded-full"
-          onClick={() =>
+          onClick={() => {
             dispatch(
               cartActions.addProduct({
                 ...product,
@@ -68,8 +68,9 @@ const WishListItem = ({ product }) => {
                   : product?.actualPrice,
                 productQuantity: 1,
               })
-            )
-          }
+            );
+            toast.success("Product Added to Cart!");
+          }}
         >
           Add to cart
         </button>

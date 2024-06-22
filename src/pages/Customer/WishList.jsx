@@ -50,6 +50,7 @@ const WishList = () => {
                     }))
                   )
                 );
+                
                 navigate("/cart");
               }}
             >
