@@ -9,6 +9,7 @@ import { useMutation } from "react-query";
 import { axiosInstance } from "../../services/axios";
 import { userActions } from "../../store/userSlice";
 import ReactImageZoom from "react-image-zoom";
+import { toast } from "react-toastify";
 
 const ProductDetails = ({
   product,
@@ -38,6 +39,7 @@ const ProductDetails = ({
     dispatch(
       cartActions.addProduct({ ...product, actualPrice, productQuantity })
     );
+    toast.success("Product Added to Cart!");
   };
 
   const { mutate: processWishList } = useMutation(
