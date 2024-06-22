@@ -19,6 +19,7 @@ const Dashboard = () => {
     cacheTime: Infinity,
     refetchOnWindowFocus: false,
   });
+
   return (
     <div className="text-ternary space-y-4">
       <h1 className="text-3xl font-medium ">Dashboard</h1>
@@ -30,7 +31,7 @@ const Dashboard = () => {
           </div>
           <div className="text-[15px]">
             <h1 className="font-semibold">Total Orders</h1>
-            <h6>{dashboard?.ordersCount}</h6>
+            <h6>{dashboard?.ordersCount ? dashboard?.ordersCount : "-"}</h6>
           </div>
         </li>
         {/* Category */}
@@ -40,7 +41,9 @@ const Dashboard = () => {
           </div>
           <div className="text-[15px]">
             <h1 className="font-semibold">Total Categorys</h1>
-            <h6>{dashboard?.categoriesCount}</h6>
+            <h6>
+              {dashboard?.categoriesCount ? dashboard?.categoriesCount : "-"}
+            </h6>
           </div>
         </li>
         {/* Product */}
@@ -50,7 +53,7 @@ const Dashboard = () => {
           </div>
           <div className="text-[15px]">
             <h1 className="font-semibold">Total Products</h1>
-            <h6>{dashboard?.itemsCount}</h6>
+            <h6>{dashboard?.itemsCount ? dashboard?.itemsCount : "-"}</h6>
           </div>
         </li>
         {/* User */}
@@ -60,7 +63,7 @@ const Dashboard = () => {
           </div>
           <div className="text-[15px]">
             <h1 className="font-semibold">Total Users</h1>
-            <h6>{dashboard?.usersCount}</h6>
+            <h6>{dashboard?.usersCount ? dashboard?.usersCount : "-"}</h6>
           </div>
         </li>
       </ul>
