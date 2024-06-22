@@ -17,6 +17,9 @@ import { getDiscountedPrice, onlyText } from "../../utils/helperFunction";
 
 const ProductItem = ({ cardSize, category, product }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [isRedirect, setIsRedirect] = useState(false);
+
   console.log(product);
 
   const { isAuthenticated, wishList: wishlistItems } = useSelector(
@@ -47,6 +50,11 @@ const ProductItem = ({ cardSize, category, product }) => {
     }
   );
 
+  const reDirectHandler = () => {
+    setIsRedirect((prevState) => !prevState);
+    // alert(isRedirect)
+  };
+
   return (
     <li className="w-full sml:w-[47%] md:w-[31%] lg:w-[23%] mb-6 ">
       {createPortal(
@@ -57,7 +65,18 @@ const ProductItem = ({ cardSize, category, product }) => {
         <ProductDetailModal product={product?.itemTitle} />,
         document.getElementById("modal")
       )}
-      <div className="relative cursor-pointer group/card mb-2">
+      <div
+        className="relative group/card mb-2 cursor-pointer"
+        onClick={() =>
+          !isRedirect
+            ? navigate(
+                `/products/${
+                  category ? category : product?.subCategory.split("/")[0]
+                }/${product?._id}`
+              )
+            : null
+        }
+      >
         <img
           src={product?.images ? product?.images[0] : productImg}
           alt=""
@@ -79,6 +98,8 @@ const ProductItem = ({ cardSize, category, product }) => {
               onClick={() =>
                 dispatch(uiActions.productDetailModalHandler(product))
               }
+              onMouseEnter={reDirectHandler}
+              onMouseLeave={reDirectHandler}
             >
               <LuEye className="scale-[1.3] group-hover/eye:text-white" />
             </button>
@@ -101,6 +122,8 @@ const ProductItem = ({ cardSize, category, product }) => {
                   toast.success("Product Added to Cart!");
                 }
               }}
+              onMouseEnter={reDirectHandler}
+              onMouseLeave={reDirectHandler}
             >
               <LuShoppingCart className="scale-[1.3] group-hover/cart:text-white" />
             </button>
@@ -124,6 +147,7 @@ const ProductItem = ({ cardSize, category, product }) => {
           </button>
         </div>
       </div>
+
       <div className="space-y-1">
         <Link
           // to={"/products/" + itemTitle}
