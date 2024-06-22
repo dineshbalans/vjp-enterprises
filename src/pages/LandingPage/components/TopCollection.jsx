@@ -46,9 +46,9 @@ const TopCollection = () => {
 
           {/* Categories */}
           <ul className="flex flex-col sml:flex-row justify-center gap-4 text-[15px] ">
-            {topProdCategories.slice(0, 4).map(({ id, title, category }) => (
+            {topProdCategories.slice(0, 4).map(({ _id, title, category }) => (
               <li
-                key={id}
+                key={_id}
                 className={`border border-dashed rounded-full px-6 py-[6px] cursor-pointer text-center ${
                   selectedCategory === category
                     ? "border-black"
@@ -72,7 +72,7 @@ const TopCollection = () => {
               )
               .map((product) => (
                 <ProductItem
-                  key={product.itemId}
+                  key={product._id}
                   category={selectedCategory}
                   product={product}
                 />
