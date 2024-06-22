@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import ProductDetails from "../../components/Product/ProductDetails";
 import { useParams, useRouteLoaderData } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { productActions } from "../../store/productSlice";
 import AdditionalInfo from "../../components/Product/AdditionalInfo";
 import RelatedProducts from "../../components/Product/RelatedProducts";
 import { selectRandomElements } from "../../utils/helperFunction";

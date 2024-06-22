@@ -4,6 +4,7 @@ import { MdDelete } from "react-icons/md";
 import { useMutation, useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
 import { axiosInstance } from "../../../../../services/axios";
+import { toast } from "react-toastify";
 
 const CategoryItem = ({ item: { _id: categoryId, title, subCategorys } }) => {
   const queryClient = useQueryClient();
@@ -11,7 +12,10 @@ const CategoryItem = ({ item: { _id: categoryId, title, subCategorys } }) => {
   const { mutateAsync: deleteCategory } = useMutation(
     () => axiosInstance.delete(`/category/delete/${categoryId}`),
     {
-      onSuccess: queryClient.invalidateQueries(["category"]),
+      onSuccess: () => {
+        queryClient.invalidateQueries(["category"])
+        toast.success("Category deleted Successfully!")
+      },
       onError: (error) => console.log(error),
     }
   );

@@ -7,7 +7,6 @@ import { useMutation, useQueryClient } from "react-query";
 import { axiosInstance } from "../../../../../services/axios";
 
 const AdminProductItem = ({ product, category }) => {
-  console.log(product)
   const queryClient = useQueryClient();
   const { mutate: deleteProduct } = useMutation(
     (id) => axiosInstance.delete(`item/delete/${id}`),

@@ -101,8 +101,6 @@ const CategoryForm = ({ init, type = "ADD", getFormData }) => {
     }
   );
 
-
-
   const submitHandler = (e) => {
     e.preventDefault();
     type === "ADD" && dispatch({ type: "RESET" });
@@ -111,8 +109,6 @@ const CategoryForm = ({ init, type = "ADD", getFormData }) => {
       description: category.cDesc.value,
       isTopCategory: category.cTopCtgry.value,
       category: category.cName.value.toLowerCase(),
-      subCategorys: [],
-      items: [],
     };
     getFormData(categoryBckEndFormat);
   };
@@ -220,23 +216,23 @@ export default CategoryForm;
 //   }, [init]);
 
 // USE EFFECT method to Fetch data from backend
-  // const getCategoryByID = async () => {
-  //   if (categoryId) {
-  //     const res = await axiosInstance.get(`/category/${categoryId}`);
-  //     console.log(res);
-  //     if (flag) {
-  //       dispatch({
-  //         type: "INITIAL_VALUE",
-  //         payload: {
-  //           cName: res.data.data.title,
-  //           cDesc: res.data.data.description,
-  //           cTopCtgry: res.data.data.isTopCategory,
-  //         },
-  //       });
-  //       setFlag(false);
-  //     }
-  //   }
-  // };
-  // useEffect(() => {
-  //   getCategoryByID();
-  // }, [categoryId]);
+// const getCategoryByID = async () => {
+//   if (categoryId) {
+//     const res = await axiosInstance.get(`/category/${categoryId}`);
+//     console.log(res);
+//     if (flag) {
+//       dispatch({
+//         type: "INITIAL_VALUE",
+//         payload: {
+//           cName: res.data.data.title,
+//           cDesc: res.data.data.description,
+//           cTopCtgry: res.data.data.isTopCategory,
+//         },
+//       });
+//       setFlag(false);
+//     }
+//   }
+// };
+// useEffect(() => {
+//   getCategoryByID();
+// }, [categoryId]);

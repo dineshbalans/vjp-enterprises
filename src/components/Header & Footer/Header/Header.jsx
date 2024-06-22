@@ -64,9 +64,9 @@ const Header = () => {
           y: headerVisible ? 0 : -100,
         }}
         transition={{ duration: 0.5, ease: "linear" }}
-        className="sticky top-0 left-0 right-0 z-40 bg-white centerContainer"
+        className="sticky top-0 left-0 right-0 z-40 bg-white border"
       >
-        <div className="flex justify-between items-center px-4 sml:px-6 py-4 border font-light relative">
+        <div className="flex justify-between items-center px-4 sml:px-6 py-4  font-light relative centerContainer">
           <button
             className="lg:hidden scale-[1.5]"
             onClick={() => dispatch(uiActions.menuBarHanlder())}

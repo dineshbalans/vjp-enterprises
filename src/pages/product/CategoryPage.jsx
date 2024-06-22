@@ -23,16 +23,20 @@ const CategoryPage = () => {
     items: [],
   };
 
-  // console.log(category);
-  // console.log(allProducts);
-  // console.log(subCategory);
-  // console.log(categorizedProducts);
-
   if (!categorizedProducts) {
-    allProducts.forEach((product) =>
-      allProductCategoryObject.items.push(...product.items)
-    );
+    allProducts.forEach((product) => {
+      console.log(product.items);
+      allProductCategoryObject.items.push(...product.items);
+    });
+    console.log("ALL Products");
+    console.log(allProductCategoryObject.items);
   }
+
+  console.log(category);
+  console.log(allProducts);
+  console.log(subCategory);
+  console.log(categorizedProducts);
+  console.log(allProductCategoryObject);
 
   return (
     <ProductList

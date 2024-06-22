@@ -4,6 +4,7 @@ const productSlice = createSlice({
   name: "product",
   initialState: {
     runUseEffect: true,
+    // Categories Data
     products: [],
     allProducts: [],
     subCategory: null,
@@ -12,6 +13,7 @@ const productSlice = createSlice({
     toggleUseEffect(state) {
       state.runUseEffect = false;
     },
+    // Categories Data
     addProducts(state, action) {
       state.products = action.payload;
     },

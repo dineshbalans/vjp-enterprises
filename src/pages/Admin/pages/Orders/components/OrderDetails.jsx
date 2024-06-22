@@ -7,7 +7,7 @@ import { FaLocationDot } from "react-icons/fa6";
 import { axiosInstance } from "../../../../../services/axios";
 import { useQuery } from "react-query";
 import { formatDateAndTime } from "../../../../../utils/helperFunction";
-import Select from "react-select";
+import StatusSelect from "react-select";
 import { toast } from "react-toastify";
 import VJPLOGO from "../../../../../assets/vjp_logo_color.png";
 
@@ -15,6 +15,40 @@ import { useReactToPrint } from "react-to-print";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import OrderDetailsPDF from "./OrderDetailsPDF";
+
+const customStyles = {
+  control: (provided) => ({
+    ...provided,
+    backgroundColor: "#D1E7DD",
+    color: "black",
+    cursor: "pointer", // Add cursor pointer for the control
+    // control: Styles the control (input) component.
+  }),
+  singleValue: (provided) => ({
+    ...provided,
+    color: "black",
+    // singleValue: Styles the selected value displayed in the input.
+  }),
+  placeholder: (provided) => ({
+    ...provided,
+    color: "black",
+    // placeholder: Styles the placeholder text.
+  }),
+  menu: (provided) => ({
+    ...provided,
+    backgroundColor: "#D1E7DD",
+    // menu: Styles the dropdown menu.
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    backgroundColor: state.isFocused ? "silver" : "#D1E7DD",
+    color: "black",
+    cursor: "pointer", // Add cursor pointer for each option
+    // option: Styles each option in the dropdown menu.
+    // The state.isFocused check is used to apply a different background color,
+    //  when an option is focused (hovered).
+  }),
+};
 
 // Example usage:
 const statusOptions = [
@@ -110,11 +144,21 @@ const OrderDetails = () => {
               Order ID :<span className="font-medium px-1">{orderId}</span>
             </h1>
           </div>
-          <Select
+
+          <StatusSelect
             options={statusOptions}
             placeholder="Select Status"
             value={status}
             onChange={handleStatusChange}
+            styles={customStyles}
+            theme={(theme) => ({
+              ...theme,
+              borderRadius: 0,
+              colors: {
+                ...theme.colors,
+                primary: "black",
+              },
+            })}
           />
         </div>
 

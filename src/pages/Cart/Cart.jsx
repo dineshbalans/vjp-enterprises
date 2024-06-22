@@ -53,8 +53,9 @@ const Cart = () => {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-8 md:gap-0 justify-between">
-            <div className="w-full md:w-fit space-y-2">
+          <div className="flex flex-wrap gap-8 md:gap-0 justify-end">
+            {/* Apply Discount */}
+            {/* <div className="w-full md:w-fit space-y-2">
               <label htmlFor="discountCode" className="text-sm">
                 Enter Discount Code
               </label>
@@ -69,7 +70,7 @@ const Cart = () => {
                   Apply Discount
                 </button>
               </div>
-            </div>
+            </div> */}
             <div className="w-full md:w-[35%] space-y-5">
               <div className="flex justify-between text-gray-500 text-sm">
                 <h1>Sub Total</h1>

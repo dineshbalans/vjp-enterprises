@@ -22,7 +22,7 @@ export default {
         lgl: "1024px",
         xl: "1280px",
         xxl: "1440px",
-        // 2xl: "1535px"
+        xxxl: "1535px",
       },
       colors: {
         // SECTION 1

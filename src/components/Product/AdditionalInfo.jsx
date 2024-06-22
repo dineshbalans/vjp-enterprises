@@ -3,10 +3,10 @@ import { additionlInfoData } from "../../data/productData";
 
 const Details = () => {
   return (
-    <div className="flex justify-between py-5">
-      <div className="w-[60%] space-y-10">
+    <div className="flex flex-col gap-10 p-5">
+      <div className="w-[100%] space-y-10 ">
         <h1 className="font-bold text-center">DESCRIPTION</h1>
-        <p className="text-sm leading-6 text-gray-600">
+        <p className="text-sm leading-6 text-gray-600 ">
           Finally—a white sneaker for the rest of your life. Whether you’re
           walking, working, or simply kicking it, the versatile and understated
           Royale Blanco is going to get you where you need to go. It might even
@@ -21,9 +21,9 @@ const Details = () => {
           workers and newsletter writers to anyone self-publishing materials.
         </p>
       </div>
-      <div className="w-[37%] space-y-10">
+      <div className="w-[100%] space-y-10 ">
         <h1 className="font-bold text-center">DETAILS</h1>
-        <ul className="text-sm leading-6 text-gray-600 list-disc space-y-2">
+        <ul className="text-sm leading-6 text-gray-600 list-disc list-inside space-y-2">
           <li>
             Made from full-grain leather sourced from top-rated local Italian
             tanneries
@@ -94,12 +94,12 @@ const AdditionalInfo = ({ description }) => {
   const [state, dispatch] = useReducer(reducer, "details");
   return (
     <div className="py-14 px-5 bg-[#F6F6F6]">
-      <ul className="flex justify-center gap-3 mb-8">
+      <ul className="flex flex-wrap justify-center gap-3 mb-8">
         {additionlInfoData.map(({ id, text, action }) => (
           <li
             key={id}
             onClick={() => dispatch(action)}
-            className={` font-medium text-[15px] border rounded-full  px-6 py-2
+            className={`w-full md:w-auto text-center font-medium text-[15px] border rounded-full  px-6 py-2
             cursor-pointer ${
               state === action
                 ? "border-black text-black hover:border-primary"

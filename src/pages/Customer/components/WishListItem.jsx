@@ -1,12 +1,13 @@
 import React from "react";
 import productImg from "../../../assets/product1.jpg";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { cartActions } from "../../../store/cartSlice";
-import { wishListActions } from "../../../store/wishListSlice";
 import { useMutation } from "react-query";
 import { axiosInstance } from "../../../services/axios";
 import { toast } from "react-toastify";
+import { userActions } from "../../../store/userSlice";
+import { getDiscountedPrice } from "../../../utils/helperFunction";
 
 const WishListItem = ({ product }) => {
   const dispatch = useDispatch();
@@ -16,7 +17,7 @@ const WishListItem = ({ product }) => {
     {
       onSuccess: (res) => {
         console.log(res);
-        dispatch(wishListActions.removeFromWishList(product?._id));
+        dispatch(userActions.removeFromWishList(product?._id));
         toast.success("Product Removed from WishList!");
       },
       onError: (err) => console.log(err),
@@ -56,7 +57,18 @@ const WishListItem = ({ product }) => {
         <button
           className="text-white   bg-primary font-semibold px-5 py-[6px] rounded-full"
           onClick={() =>
-            dispatch(cartActions.addProduct({ ...product, productQuantity: 1 }))
+            dispatch(
+              cartActions.addProduct({
+                ...product,
+                actualPrice: product?.discountPercentage
+                  ? getDiscountedPrice(
+                      product?.actualPrice,
+                      product?.discountPercentage
+                    )
+                  : product?.actualPrice,
+                productQuantity: 1,
+              })
+            )
           }
         >
           Add to cart

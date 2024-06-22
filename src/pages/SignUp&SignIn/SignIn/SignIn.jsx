@@ -86,6 +86,7 @@ const SignIn = () => {
         toast.success(onlyText(res.data.message));
         dispatchRedux(userActions.loginUser());
         dispatchRedux(userActions.setUser(res.data.user));
+        dispatchRedux(userActions.setWishList(res.data.user.wishList));
         navigate("/");
       },
       onError: (err) => {

@@ -6,6 +6,7 @@ import { axiosInstance } from "../../../services/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useQueryEvents } from "../../../hooks/useQueryWithCallbacks";
+import { toast } from "react-toastify";
 
 const EditCategory = () => {
   const { categoryId } = useParams();
@@ -16,7 +17,7 @@ const EditCategory = () => {
     (data) => axiosInstance.put(`/category/update/${categoryId}`, data),
     {
       onSuccess: (res) => {
-        console.log(res.data);
+        toast.success(res.data.message);
         queryClient.invalidateQueries(["categoryById"]);
       },
       onError: (error) => console.log(error),

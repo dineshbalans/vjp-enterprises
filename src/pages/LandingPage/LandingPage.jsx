@@ -1,11 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Carousel from "../../components/Carousel/Carousel";
 import newsLetterBg from "../../assets/Newsletter-banner.jpg";
 import ProductItem from "../../components/Product/ProductItem";
 import { featuresData } from "../../data/featuresData";
 import TopCollection from "./components/TopCollection";
+import { useSelector } from "react-redux";
+import { selectRandomElements } from "../../utils/helperFunction";
 
 const LandingPage = () => {
+  const [trendingProducts, setTrendingProducts] = useState([]);
+  const allCategories = useSelector((state) => state.product.products);
+
+  useEffect(() => {
+    if (allCategories.length > 0) {
+      console.log(allCategories);
+      allCategories.forEach((category) =>
+        category.items.forEach(
+          (product) =>
+            product.isTrending &&
+            setTrendingProducts((prevState) => [...prevState, product])
+        )
+      );
+    }
+  }, [allCategories]);
+  console.log(trendingProducts);
+
   return (
     <section className="">
       <Carousel />
@@ -46,11 +65,17 @@ const LandingPage = () => {
                 Get through all trending products and get your best deal.
               </h3>
             </div>
-            <ul className="flex flex-wrap justify-between">
-              {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
-                <ProductItem key={i} />
-              ))}
-            </ul>
+            {trendingProducts.length > 0 && (
+              <ul className="flex flex-wrap justify-between">
+                {trendingProducts
+                  .slice()
+                  .sort(() => 0.5 - Math.random())
+                  .slice(0, 8)
+                  ?.map((product) => (
+                    <ProductItem key={product._id} product={product} />
+                  ))}
+              </ul>
+            )}
           </div>
         </div>
         {/* Features List */}

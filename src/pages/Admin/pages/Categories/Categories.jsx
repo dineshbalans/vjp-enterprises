@@ -6,6 +6,7 @@ import { useMutation } from "react-query";
 import { axiosInstance } from "../../../../services/axios";
 import { useDispatch, useSelector } from "react-redux";
 import { adminActions } from "../../../../store/adminSlice";
+import { toast } from "react-toastify";
 
 const Categories = () => {
   const dispatch = useDispatch();
@@ -16,7 +17,10 @@ const Categories = () => {
   const { mutateAsync: createCategory } = useMutation(
     (data) => axiosInstance.post("/category/create", data),
     {
-      onSuccess: (res) => dispatch(adminActions.addCategory(res.data.data)),
+      onSuccess: (res) => {
+        toast.success(res.data.message);
+        dispatch(adminActions.addCategory(res.data.data));
+      },
       onError: (error) => console.log(error),
     }
   );

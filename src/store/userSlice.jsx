@@ -16,6 +16,7 @@ const userSlice = createSlice({
       state.isAuthenticated = false;
       state.user = {};
       state.orders = [];
+      state.wishList = [];
     },
     setUser(state, { payload }) {
       state.user = payload;

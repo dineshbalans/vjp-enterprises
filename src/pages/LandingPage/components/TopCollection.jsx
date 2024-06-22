@@ -14,35 +14,19 @@ const TopCollection = () => {
   const allProducts = useSelector((state) => state.product.products);
   const [topProdCategories, setTopProdCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
-  //   const [selectedCategoryProducts, setSelectedCategoryProducts] = useState("");
 
   selectedCategoryProducts = topProdCategories.find(
     (category) => category.category === selectedCategory
   );
 
-  console.log(selectedCategoryProducts?.items);
-
-  console.log(topProdCategories.slice(0, 3));
-
   useEffect(() => {
-    allProducts && console.log(allProducts);
-    const withoutAllProductCategory = allProducts.filter(
-      (product) => product.category !== "all-products"
+    const isTopCategoryProducts = allProducts.filter(
+      (product) => product.isTopCategory
     );
 
-    allProducts && console.log(withoutAllProductCategory);
-
-    withoutAllProductCategory.forEach((category, index) => {
+    isTopCategoryProducts.forEach((category, index) => {
       index === 0 && setSelectedCategory(category.category);
-      setTopProdCategories((prevState) => [
-        ...prevState,
-        {
-          id: category.id,
-          name: category.title,
-          category: category.category,
-          items: category.items,
-        },
-      ]);
+      setTopProdCategories((prevState) => [...prevState, category]);
     });
   }, [allProducts]);
 
@@ -62,7 +46,7 @@ const TopCollection = () => {
 
           {/* Categories */}
           <ul className="flex flex-col sml:flex-row justify-center gap-4 text-[15px] ">
-            {topProdCategories.slice(0, 3).map(({ id, name, category }) => (
+            {topProdCategories.slice(0, 4).map(({ id, title, category }) => (
               <li
                 key={id}
                 className={`border border-dashed rounded-full px-6 py-[6px] cursor-pointer text-center ${
@@ -72,7 +56,7 @@ const TopCollection = () => {
                 }`}
                 onClick={() => setSelectedCategory(category)}
               >
-                {name}
+                {title}
               </li>
             ))}
           </ul>
@@ -112,3 +96,8 @@ const TopCollection = () => {
 };
 
 export default TopCollection;
+
+// console.log(topProdCategories);
+// console.log(selectedCategoryProducts?.items);
+// console.log(topProdCategories.slice(0, 3));
+// allProducts && console.log(allProducts);

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { useSelector } from "react-redux";
 
-const OrderSummary = ({ deliveryType, setDeliveryType }) => {
+const OrderSummary = ({}) => {
   const [showOrderSummary, setShowOrderSummary] = useState(true);
 
   const cart = useSelector((state) => state.cart.cart);
@@ -10,7 +10,7 @@ const OrderSummary = ({ deliveryType, setDeliveryType }) => {
 
   return (
     <div className="w-full lg:w-[34%] lg:sticky top-0 h-fit p-5 bg-[#F5F5F5] rounded-md">
-      <h3 className="text-2xl font-medium text-ternary  pb-6">Order Summary</h3>
+      <h3 className="inputTitle">Order Summary</h3>
       <div className="flex justify-between border-y py-5 items-baseline">
         <button
           className="flex items-center gap-2"
@@ -72,60 +72,6 @@ const OrderSummary = ({ deliveryType, setDeliveryType }) => {
           </div>
         </div>
       )}
-
-      <div>
-        <h3 className="inputTitle">Delivery Type</h3>
-        <div className="flex gap-5">
-          <div>
-            <input
-              type="radio"
-              name="deliveryType"
-              value="VJP"
-              id="VJP"
-              className="mr-2 cursor-pointer"
-              checked={deliveryType.type === "VJP"}
-              onClick={() =>
-                setDeliveryType((prevState) => ({ ...prevState, type: "VJP" }))
-              }
-            />
-            <label htmlFor="VJP" className="cursor-pointer">
-              VJP
-            </label>
-          </div>
-          <div>
-            <input
-              type="radio"
-              name="deliveryType"
-              value="Self"
-              id="Self"
-              className="mr-2 cursor-pointer"
-              checked={deliveryType.type === "Self"}
-              onClick={() =>
-                setDeliveryType((prevState) => ({ ...prevState, type: "Self" }))
-              }
-            />
-            <label htmlFor="Self" className="cursor-pointer">
-              Self
-            </label>
-          </div>
-        </div>
-
-        {deliveryType.type === "Self" && (
-          <textarea
-            name="additional notes"
-            id="additional notes"
-            value={deliveryType.additionalNotes}
-            onChange={(e) =>
-              setDeliveryType((prevState) => ({
-                ...prevState,
-                additionalNotes: e.target.value,
-              }))
-            }
-            className="w-full h-24 outline-none border p-2 rounded mt-3"
-            placeholder="Additional Notes (Optional)"
-          />
-        )}
-      </div>
     </div>
   );
 };

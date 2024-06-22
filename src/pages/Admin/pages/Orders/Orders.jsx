@@ -31,17 +31,16 @@ const Orders = () => {
   const orders = useSelector((state) => state.admin.orders);
 
   // Get Admin Orders Data
-  useQueryEvents(
-    useQuery(
-      ["getAdminOrders", { fromDate, toDate, status, currentPageNumber }],
-      () =>
-        axiosInstance.get(
-          `/orders?from=${dayjs(fromDate).format("YYYY-MM-DD")}&to=${dayjs(
-            toDate
-          ).format("YYYY-MM-DD")}&keyword=${status}&page=${currentPageNumber}`
-        )
-    ),
+  useQuery(
+    ["getAdminOrders", { fromDate, toDate, status, currentPageNumber }],
+    () =>
+      axiosInstance.get(
+        `/orders?from=${dayjs(fromDate).format("YYYY-MM-DD")}&to=${dayjs(
+          toDate
+        ).format("YYYY-MM-DD")}&keyword=${status}&page=${currentPageNumber}`
+      ),
     {
+      enabled: !!fromDate && !!toDate,
       onSuccess: (res) => {
         console.log(res.data);
         dispatch(adminActions.addOrders(res.data.data));
@@ -55,6 +54,8 @@ const Orders = () => {
   };
 
   console.log(orders);
+  console.log(fromDate);
+  console.log(toDate);
   return (
     <div className="text-ternary space-y-4">
       <h1 className="text-3xl font-medium">Orders</h1>
@@ -127,7 +128,9 @@ export default Orders;
 const OrderRow = ({ order }) => {
   return (
     <tr className="text-sm">
-      <td className="border px-2 py-2 text-blue-800 underline">{order._id}</td>
+      <td className="border px-2 py-2 text-blue-800 underline">
+        <Link to={`/admin/orders/${order._id}`}>{order._id}</Link>
+      </td>
       <td className="border px-2 py-2">{order.user.email}</td>
       <td className="border px-2 py-2">₹{order.total}</td>
       <td className="border px-2 py-2">

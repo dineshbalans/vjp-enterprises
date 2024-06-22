@@ -14,7 +14,7 @@ import ProtectedRoute from "../../components/General/ProtectedRoute";
 
 const CheckOutPage = () => {
   const navigate = useNavigate();
-  const [isShippingCmplted, setIsShippingCmplted] = useState(false);
+
   const [deliveryType, setDeliveryType] = useState({
     type: "VJP",
     additionalNotes: "",
@@ -87,87 +87,12 @@ const CheckOutPage = () => {
           </div>
         ) : (
           <div className="space-y-12 pt-5 ">
-            <div
-              className="flex flex-wrap-reverse items-center justify-between
-          gap-10 lg:gap-0"
-            >
-              <div className="w-full lg:w-[63%] flex items-center ">
-                <div
-                  className={`w-1/2 ${
-                    !isShippingCmplted ? "text-black" : "text-[#B09C99]"
-                  }`}
-                >
-                  <div className="relative">
-                    <hr
-                      className={`border-2  rounded-r-full ${
-                        !isShippingCmplted && "border-black"
-                      }`}
-                    />
-                    <div className="absolute inset-0 flex justify-center items-center">
-                      <div
-                        className={`w-9 h-9 border-2 rounded-full 
-                        flex justify-center items-center bg-white ${
-                          !isShippingCmplted && "border-black"
-                        }`}
-                      >
-                        <GiCheckMark className="scale-75" />
-                      </div>
-                    </div>
-                  </div>
-                  <h1 className="pt-6 text-center font-semibold text-sm">
-                    SHIPPING
-                  </h1>
-                </div>
-                <div
-                  className={`w-1/2 ${
-                    isShippingCmplted ? "text-black" : "text-[#B09C99]"
-                  }`}
-                >
-                  <div className="relative">
-                    <hr
-                      className={`border-2  rounded-r-full ${
-                        isShippingCmplted && "border-black"
-                      }`}
-                    />
-                    <div className="absolute inset-0 flex justify-center items-center">
-                      <div
-                        className={`w-9 h-9 border-2 rounded-full 
-                        flex justify-center items-center bg-white ${
-                          isShippingCmplted && "border-black"
-                        }`}
-                      >
-                        {isShippingCmplted ? (
-                          <GiCheckMark className="scale-75" />
-                        ) : (
-                          <h1>2</h1>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  <h1 className="pt-6 text-center font-semibold text-sm">
-                    REVIEW & PAYMENTS
-                  </h1>
-                </div>
-              </div>
-              {!isAuthenticated && (
-                <Link
-                  to="/account/sign-in"
-                  className="bg-ternary text-white font-medium px-10 py-3 rounded-full lg:ml-auto flex"
-                >
-                  <span className="text-center w-full">SIGN IN</span>
-                </Link>
-              )}
-            </div>
             <div className="flex flex-wrap-reverse lg:flex-nowrap gap-8 min-h-[90vh]">
-              {isShippingCmplted ? (
-                <PaymentMethod
-                  {...{ setIsShippingCmplted }}
-                  orderHandler={orderHandler}
-                />
-              ) : (
-                <CheckOutForm {...{ setIsShippingCmplted }} />
-              )}
-              <OrderSummary {...{ deliveryType, setDeliveryType }} />
+              <PaymentMethod
+                orderHandler={orderHandler}
+                {...{ deliveryType, setDeliveryType }}
+              />
+              <OrderSummary />
             </div>
           </div>
         )}

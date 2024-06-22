@@ -4,13 +4,15 @@ import WishListItem from "./components/WishListItem";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Disclaimer from "../../components/General/UI/Disclaimer";
-import { wishListActions } from "../../store/wishListSlice";
+
 import { cartActions } from "../../store/cartSlice";
+import { userActions } from "../../store/userSlice";
+import { getDiscountedPrice } from "../../utils/helperFunction";
 
 const WishList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const wishListItems = useSelector((state) => state.wishlist.items);
+  const { wishList: wishListItems } = useSelector((state) => state.user);
 
   return (
     <>
@@ -25,7 +27,7 @@ const WishList = () => {
             <button
               className="secondaryBttn w-full md:w-fit"
               onClick={() => {
-                dispatch(wishListActions.clearWishList());
+                dispatch(userActions.clearWishList());
                 window.scrollTo(0, 0);
               }}
             >
@@ -38,6 +40,12 @@ const WishList = () => {
                   cartActions.addAllProducts(
                     wishListItems.map((product) => ({
                       ...product,
+                      actualPrice: product?.discountPercentage
+                        ? getDiscountedPrice(
+                            product?.actualPrice,
+                            product?.discountPercentage
+                          )
+                        : product?.actualPrice,
                       productQuantity: 1,
                     }))
                   )

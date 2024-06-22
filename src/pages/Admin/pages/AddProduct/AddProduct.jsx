@@ -5,6 +5,8 @@ import HighlightsForm from "./components/HighlightsForm";
 import SlctSubCtgry from "./components/SlctSubCtgry";
 import { useMutation, useQueryClient } from "react-query";
 import { axiosInstance } from "../../../../services/axios";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const initialState = {
   pName: { value: "", error: "" },
@@ -154,10 +156,17 @@ const reducer = (prevState, action) => {
           pStock: { ...prevState.pStock, error: action.payload },
         };
   }
+  // RESET
+  if (action.type === "RESET") {
+    return initialState;
+  }
+
+  return prevState;
 };
 
 const AddProduct = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [product, dispatch] = useReducer(reducer, initialState);
 
   const { mutate: createProduct } = useMutation(
@@ -169,8 +178,12 @@ const AddProduct = () => {
       }),
     {
       onSuccess: (res) => {
-        console.log(res.data);
+        toast.success(
+          "Product Added Successfully!, Please wait some time to see changes"
+        );
         queryClient.invalidateQueries(["category"]);
+        dispatch({ type: "RESET" });
+        navigate("/admin/products");
       },
       onError: (error) => console.log(error),
     }
@@ -221,7 +234,6 @@ const AddProduct = () => {
     console.log(product);
     console.log(formData);
     createProduct(formData);
-    alert("Product Added Successfully");
   };
   return (
     <div className="text-ternary space-y-4 w-full">

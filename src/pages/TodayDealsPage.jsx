@@ -8,9 +8,8 @@ import { productActions } from "../store/productSlice";
 import Pagination from "../components/General/Pagination";
 
 const TodayDealsPage = () => {
-  const dispatch = useDispatch();
-  const products = useSelector((state) => state.product.products);
-  const data = useRouteLoaderData("products");
+  const allCategories = useSelector((state) => state.product.products);
+
   const [dealProducts, setDealProducts] = useState([]);
   console.log(dealProducts);
 
@@ -22,30 +21,17 @@ const TodayDealsPage = () => {
   const totalpages = Math.ceil(productLength / itemsPerPage);
 
   useEffect(() => {
-    const arr = [];
-    // products.length && data && dispatch(productActions.addProducts(data));
-
-    const withOutAllProducts = (data || products).filter(
-      (product) => product.category !== "all-products" && product
-    );
-    console.log(withOutAllProducts);
-
-    withOutAllProducts.forEach((product) =>
-      product.items.forEach(
-        (item) =>
-          item.isSale &&
-          // setDealProducts((prevState) =>
-          //   prevState?.find((product) =>
-          //     product.itemId === item.itemId
-          //       ? prevState
-          //       : [...prevState, { ...item, category: product.category }]
-          //   )
-          // )
-          arr.push({ ...item, category: product.category })
-      )
-    );
-    setDealProducts([...new Set(arr)]);
-  }, [data, products]);
+    if (allCategories.length > 0) {
+      console.log(allCategories);
+      allCategories.forEach((category) =>
+        category.items.forEach(
+          (product) =>
+            product.isSale &&
+            setDealProducts((prevState) => [...prevState, product])
+        )
+      );
+    }
+  }, [allCategories]);
 
   return (
     <section>
@@ -65,7 +51,7 @@ const TodayDealsPage = () => {
         <Adtile2 />
         <ul className="bg-white border border-gray-300 mb-16 p-5 flex flex-wrap justify-between">
           {dealProducts?.slice(startIndex, endIndex).map((product) => (
-            <ProductItem key={product.itemId} category={null} {...product} />
+            <ProductItem key={product._id} {...{ product }} />
           ))}
         </ul>
         <div className="p-4 mb-10">

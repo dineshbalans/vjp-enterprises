@@ -6,11 +6,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { productActions } from "../store/productSlice";
 import Pagination from "../components/General/Pagination";
 import ProductItem from "../components/Product/ProductItem";
+import { useQuery } from "react-query";
+import { axiosInstance } from "../services/axios";
 
 const NewArrivalPage = () => {
-  const dispatch = useDispatch();
-  const products = useSelector((state) => state.product.products);
-  const data = useRouteLoaderData("products");
   const [newArrProducts, setNewArrProducts] = useState([]);
 
   const productLength = newArrProducts?.length;
@@ -20,21 +19,13 @@ const NewArrivalPage = () => {
   const endIndex = currentPageNumber * itemsPerPage;
   const totalpages = Math.ceil(productLength / itemsPerPage);
 
-  useEffect(() => {
-    products.length === 0 && data && dispatch(productActions.addProducts(data));
-    (data || products)
-      .filter((product) => !(product.category === "all-products") && product)
-      .forEach((product) =>
-        product.items
-          .slice(0, 3)
-          .forEach((item) =>
-            setNewArrProducts((prevState) => [
-              ...prevState,
-              { ...item, category: product.category },
-            ])
-          )
-      );
-  }, []);
+  useQuery(["getLatestItems"], () => axiosInstance.get("/latest-items"), {
+    onSuccess: (res) => setNewArrProducts(res.data.data),
+    onError: (err) => console.log(err),
+    refetchOnWindowFocus: false,
+    staleTime: false,
+    cacheTime: false,
+  });
 
   return (
     <section>
@@ -53,7 +44,7 @@ const NewArrivalPage = () => {
         <Adtiles />
         <ul className="bg-white border border-gray-300 mb-5 p-5 flex flex-wrap justify-between">
           {newArrProducts.slice(startIndex, endIndex).map((product) => (
-            <ProductItem key={product.itemId} category={null} {...product} />
+            <ProductItem key={product._id} category={null} {...{ product }} />
           ))}
         </ul>
         <div className="p-4 mb-10">

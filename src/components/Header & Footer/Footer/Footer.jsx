@@ -19,8 +19,13 @@ const Footer = () => {
           />
           <ul className="space-y-5">
             {footerData.map(({ id, cntnt, Icon }) => (
-              <li key={id} className="flex gap-3 items-center justify-center lg:justify-start">
-                <Icon className="scale-[1.4]" />
+              <li
+                key={id}
+                className="flex gap-3 items-center justify-center lg:justify-start"
+              >
+                <div>
+                  <Icon className="scale-[1.2]" />
+                </div>
                 <h6 className="">{cntnt}</h6>
               </li>
             ))}

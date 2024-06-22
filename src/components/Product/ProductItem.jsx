@@ -4,7 +4,6 @@ import { LuEye, LuHeart, LuShoppingCart } from "react-icons/lu";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { cartActions } from "../../store/cartSlice";
-import { wishListActions } from "../../store/wishListSlice";
 import { uiActions } from "../../store/uiSlice";
 import Modal from "../General/UI/Modal";
 import { createPortal } from "react-dom";
@@ -14,13 +13,15 @@ import { userActions } from "../../store/userSlice";
 import { useMutation } from "react-query";
 import { axiosInstance } from "../../services/axios";
 import { toast } from "react-toastify";
-import { onlyText } from "../../utils/helperFunction";
+import { getDiscountedPrice, onlyText } from "../../utils/helperFunction";
 
 const ProductItem = ({ cardSize, category, product }) => {
   const dispatch = useDispatch();
+  console.log(product);
 
-  const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
-  const wishlistItems = useSelector((state) => state.wishlist.items);
+  const { isAuthenticated, wishList: wishlistItems } = useSelector(
+    (state) => state.user
+  );
 
   const exitsInWishList = wishlistItems.some(
     (item) => item._id === product?._id
@@ -33,8 +34,8 @@ const ProductItem = ({ cardSize, category, product }) => {
         console.log(res);
         dispatch(
           exitsInWishList
-            ? wishListActions.removeFromWishList(product?._id)
-            : wishListActions.addToWishList(product)
+            ? userActions.removeFromWishList(product?._id)
+            : userActions.addToWishList(product)
         );
         toast.success(
           !exitsInWishList
@@ -61,8 +62,13 @@ const ProductItem = ({ cardSize, category, product }) => {
           src={product?.images ? product?.images[0] : productImg}
           alt=""
           loading="lazy"
-          className=" object-cover object-center h-64 w-full"
+          className=" object-cover object-center h-72 w-full"
         />
+        {product?.discountPercentage && (
+          <div className=" absolute top-4 right-4 text-sm bg-primary text-white px-2 py-[1px]">
+            {`${product?.discountPercentage}%`}
+          </div>
+        )}
         <div
           className="opacity-0 group-hover/card:opacity-100 absolute inset-0 bg-black/10 
                     flex p-4 justify-center items-center transition-all ease-linear duration-[400ms]"
@@ -81,7 +87,16 @@ const ProductItem = ({ cardSize, category, product }) => {
               onClick={() =>
                 product &&
                 dispatch(
-                  cartActions.addProduct({ ...product, productQuantity: 1 })
+                  cartActions.addProduct({
+                    ...product,
+                    actualPrice: product?.discountPercentage
+                      ? getDiscountedPrice(
+                          product?.actualPrice,
+                          product?.discountPercentage
+                        )
+                      : product?.actualPrice,
+                    productQuantity: 1,
+                  })
                 )
               }
             >
@@ -110,7 +125,9 @@ const ProductItem = ({ cardSize, category, product }) => {
       <div className="space-y-1">
         <Link
           // to={"/products/" + itemTitle}
-          to={`/products/${category}/${product?._id}`}
+          to={`/products/${
+            category ? category : product?.subCategory.split("/")[0]
+          }/${product?._id}`}
           // to={`${_id}`}
           className="text-[15px] font-medium text-ternary hover:text-pink-500
                   transition-all ease-linear cursor-pointer"
@@ -118,7 +135,17 @@ const ProductItem = ({ cardSize, category, product }) => {
           {product?.itemTitle}
         </Link>
         <p className="text-[13px] font-medium">
-          ₹ {`${product?.actualPrice}.00`}
+          {product?.discountPercentage ? (
+            <span className="flex items-center gap-1">
+              <span className="line-through">{`₹${
+                product?.actualPrice -
+                (product?.actualPrice * product?.discountPercentage) / 100
+              }`}</span>{" "}
+              <span className="text-primary">₹{product?.actualPrice}</span>
+            </span>
+          ) : (
+            <span className="text-primary">{`₹ ${product?.actualPrice}`}</span>
+          )}
         </p>
       </div>
     </li>
@@ -146,6 +173,7 @@ const ModelSignup = ({ product }) => {
         dispatch(uiActions.wishListSignInModalHandler());
         dispatch(userActions.loginUser());
         dispatch(userActions.setUser(res.data.user));
+        dispatch(userActions.setWishList(res.data.user.wishList));
         navigate("/");
       },
       onError: (err) => {
@@ -256,9 +284,9 @@ const ProductDetailModal = () => {
     <>
       {productDetailModal && (
         <Modal isOpen={productDetailModal} className="">
-          <div className="bg-white overflow-y-scroll h-[90vh] xxl:h-auto w-[75%]">
+          <div className="bg-white overflow-y-scroll h-[90vh] w-[90%] mdl:w-[75%]">
             <AiOutlineClose
-              className="ml-auto scale-150 mr-6 translate-y-5 cursor-pointer"
+              className="ml-auto scale-125 md:scale-150 mr-6 translate-y-3 md:translate-y-5 cursor-pointer "
               onClick={() => dispatch(uiActions.productDetailModalHandler())}
             />
             <ProductDetails

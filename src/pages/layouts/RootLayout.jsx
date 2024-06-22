@@ -15,7 +15,6 @@ import { userActions } from "../../store/userSlice";
 import { axiosInstance } from "../../services/axios";
 import { useQuery } from "react-query";
 import { useQueryEvents } from "../../hooks/useQueryWithCallbacks";
-import { wishListActions } from "../../store/wishListSlice";
 
 const RootLayout = () => {
   const dispatch = useDispatch();
@@ -43,7 +42,7 @@ const RootLayout = () => {
         if (res.data.data) {
           dispatch(userActions.loginUser());
           dispatch(userActions.setUser(res.data.data));
-          dispatch(wishListActions.setWishList(res.data.data.wishList));
+          dispatch(userActions.setWishList(res.data.data.wishList));
         }
       } catch (error) {
         console.log("An error happened:", error);

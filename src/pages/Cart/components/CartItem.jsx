@@ -41,27 +41,13 @@ const CartItem = ({ product }) => {
           >
             -
           </button>
-          <input
-            type="number"
-            className="flex w-12 h-full outline-none pl-5 text-gray-500 text-[15px]"
-            value={product?.productQuantity}
-            onChange={(event) => {
-              if (+event.target.value < 0) {
-                return;
-              }
-              dispatch(
-                cartActions.setProductQuantity({
-                  _id: product?._id,
-                  productQuantity: +event.target.value,
-                })
-              );
-            }}
-          />
+          <h1 className="flex w-12 justify-center items-center">
+            {product?.productQuantity}
+          </h1>
           <button
-            className="px-3 text-2xl"
-            onClick={() =>
-              dispatch(cartActions.increaseProductQuantity(product?._id))
-            }
+            className="px-4 text-2xl disabled:cursor-not-allowed"
+            disabled={product?.productQuantity >= product?.stock}
+            onClick={() => setProductQuantity((prevState) => prevState + 1)}
           >
             +
           </button>

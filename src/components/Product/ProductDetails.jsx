@@ -1,18 +1,14 @@
 import React, { useState } from "react";
 import JsonDisplay from "../General/UI/JsonDisplay";
-import {
-  LuChevronLeftCircle,
-  LuChevronRightCircle,
-  LuHeart,
-} from "react-icons/lu";
+import { LuHeart } from "react-icons/lu";
 import productDetailSpecs from "../../assets/productDetailSpecs.png";
 import Breadcrumbs from "../General/UI/Breadcrumbs";
 import { useDispatch, useSelector } from "react-redux";
 import { cartActions } from "../../store/cartSlice";
-import { wishListActions } from "../../store/wishListSlice";
 import { useMutation } from "react-query";
 import { axiosInstance } from "../../services/axios";
 import { userActions } from "../../store/userSlice";
+import ReactImageZoom from "react-image-zoom";
 
 const ProductDetails = ({
   product,
@@ -24,29 +20,24 @@ const ProductDetails = ({
   const [productQuantity, setProductQuantity] = useState(1);
   const [productImageIndex, setProductImageIndex] = useState(0);
 
-  const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
-  const wishListItems = useSelector((state) => state.wishlist.items);
+  const { isAuthenticated, wishList: wishListItems } = useSelector(
+    (state) => state.user
+  );
 
   const itemExistsInWishList = wishListItems.find(
-    (item) => item._id === product._id
+    (item) => item._id === product?._id
   );
-  console.log(product);
 
   const addToCartHandler = () => {
-    const price = product?.actualPrice;
-    // const price = product?.discountPrice;
-    // .replace(/,/g, "").slice(1);
-    // console.log({...product,productQuantity});
-    // const cartData = {
-    //   _id: product?._id,
-    //   itemTitle: product?.itemTitle,
-    //   images: product?.images,
-    //   price,
-    //   productQuantity,
-    //   category: product?.subCategory,
-    // };
-    dispatch(cartActions.addProduct({ ...product, productQuantity }));
-    // console.log(cartData);
+    const actualPrice = product?.discountPercentage
+      ? product?.actualPrice -
+        (product?.actualPrice * product?.discountPercentage) / 100
+      : product?.actualPrice;
+
+    // console.log({ ...product, actualPrice, productQuantity });
+    dispatch(
+      cartActions.addProduct({ ...product, actualPrice, productQuantity })
+    );
   };
 
   const { mutate: processWishList } = useMutation(
@@ -56,11 +47,8 @@ const ProductDetails = ({
         console.log(res);
         dispatch(
           itemExistsInWishList
-          // userActions.removeFromWishList(product?._id)
-          // userActions.addToWishList(product)
-
-            ? wishListActions.removeFromWishList(product?._id)
-            : wishListActions.addToWishList(product)
+            ? userActions.removeFromWishList(product?._id)
+            : userActions.addToWishList(product)
         );
       },
       onError: (err) => console.log(err),
@@ -110,13 +98,29 @@ const ProductDetails = ({
             </ul>
             {product?.images ? (
               <div className="relative">
+                {/* Normal Image with No Zoom */}
                 <img
                   src={product?.images[productImageIndex]}
                   alt=""
-                  className="w-full h-full object-cover object-center"
+                  className="w-full h-full object-cover object-center md:hidden"
                   loading="lazy"
                 />
-                <div className=" absolute inset-0 flex items-center justify-between px-5 group/productImg ">
+                {/* Zoomable */}
+                <div className="hidden md:block relative">
+                  <ReactImageZoom
+                    // width={400}
+                    // height={250}
+                    // zoomPosition="original"
+                    // offset={"vertical: 0, horizontal: 10"}
+                    zoomStyle="height: 500px; object-fit: contain; object-position: center;
+                      border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+                      padding: 5px;"
+                    zoomWidth={500}
+                    img={product?.images && product?.images[productImageIndex]}
+                  />
+                </div>
+                {/* Controls */}
+                {/* <div className=" absolute inset-0 flex items-center justify-between px-5 group/productImg ">
                   <LuChevronLeftCircle
                     className="cursor-pointer text-ternary opacity-0 group-hover/productImg:opacity-100 transition-all ease-linear duration-300"
                     size={38}
@@ -139,13 +143,14 @@ const ProductDetails = ({
                       )
                     }
                   />
-                </div>
+                </div> */}
                 {!showAllImage && (
-                  <ul className="flex gap-2 justify-center items-center pt-5">
+                  <ul className="flex gap-2 justify-center items-center pt-5 ">
                     {Array.from(Array(product?.images.length).keys()).map(
-                      (i) => (
+                      (i, index) => (
                         <li
                           key={i}
+                          onClick={() => setProductImageIndex(index)}
                           className={`h-2 w-2 rounded-full border border-black ${
                             productImageIndex === i
                               ? "bg-black"
@@ -164,13 +169,49 @@ const ProductDetails = ({
             )}
           </div>
 
-          <div className="w-full lg:w-[47%] space-y-5 text-ternary">
+          <div
+            className={`w-full lg:w-[47%] space-y-4 text-ternary ${
+              !showAllImage && "mt-5"
+            }`}
+          >
             <h1 className="text-gray-800 text-xl font-semibold text-justify sml:text-left">
               {product?.itemTitle}
             </h1>
-            <h4 className=" text-gray-400 text-2xl ">
-              {`₹${product?.actualPrice}`}
-            </h4>
+
+            <div className="space-y-1">
+              <h4 className=" text-gray-400 text-2xl ">
+                {/* Discounted Percentage */}
+                {product?.discountPercentage && (
+                  <span className={`text-primary pr-2 text-lg`}>
+                    -{product?.discountPercentage}%
+                  </span>
+                )}
+
+                {/* Discounted Price */}
+                <span className={`text-black`}>
+                  ₹
+                  {product?.discountPercentage
+                    ? product?.actualPrice -
+                      (product?.actualPrice * product?.discountPercentage) / 100
+                    : product?.actualPrice}
+                </span>
+              </h4>
+
+              {/* Actual Price */}
+              {product?.discountPercentage && (
+                <h6 className="text-[13px]">
+                  M.R.P:
+                  <span
+                    className={`${
+                      product?.discountPercentage && "line-through"
+                    } pl-1`}
+                  >
+                    ₹{product?.actualPrice}
+                  </span>
+                </h6>
+              )}
+            </div>
+
             <p className="text-justify md:text-left text-sm leading-6">{`${
               product?.itemDescription?.split(".")[0]
             }.`}</p>
@@ -186,7 +227,7 @@ const ProductDetails = ({
                 >
                   -
                 </button>
-                <input
+                {/* <input
                   type="number"
                   className="flex w-12 h-full outline-none pl-5 "
                   value={productQuantity}
@@ -196,9 +237,13 @@ const ProductDetails = ({
                     }
                     setProductQuantity(+event.target.value);
                   }}
-                />
+                /> */}
+                <h1 className="flex w-12 justify-center items-center">
+                  {productQuantity}
+                </h1>
                 <button
-                  className="px-4 text-2xl"
+                  className="px-4 text-2xl disabled:cursor-not-allowed"
+                  disabled={productQuantity >= product?.stock}
                   onClick={() =>
                     setProductQuantity((prevState) => prevState + 1)
                   }
@@ -216,7 +261,7 @@ const ProductDetails = ({
 
             <button
               type="button"
-              className="text-gray-500 hover:text-primary transition-all ease-linear
+              className="text-gray-500 hover:text-primary transition-all ease-linear 
              flex gap-1 items-center w-fit"
               onClick={() => processWishList(product._id)}
             >
@@ -239,14 +284,6 @@ const ProductDetails = ({
               <img src={productDetailSpecs} alt="" />
             </div>
 
-            {/* <h5></h5> */}
-            {/* <div className="flex space-x-3 text-2xl items-baseline">
-              <span>{`₹${product?.discountPrice}`}</span>
-              <span className="line-through text-gray-400 text-lg ">
-                {`₹${product?.actualPrice}`}
-              </span>
-            </div> */}
-
             <JsonDisplay data={product?.highlights} />
 
             <h4 className="text-center sml:text-left">
@@ -254,6 +291,22 @@ const ProductDetails = ({
               <span className="capitalize text-primary">
                 {product?.subCategory?.split("/")[0]}
               </span>
+            </h4>
+
+            <h4
+              className={`border w-fit px-2 text-sm py-[2px] text-white ${
+                product?.stock < 1
+                  ? "bg-red-500"
+                  : product?.stock <= 20
+                  ? "bg-yellow-500"
+                  : "bg-green-500"
+              }`}
+            >
+              {product?.stock < 1
+                ? "Out of Stock"
+                : product?.stock <= 20
+                ? "Low Stock"
+                : "In Stock"}
             </h4>
           </div>
         </div>

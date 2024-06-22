@@ -35,7 +35,7 @@
 }
 
 .centerContainer {
-  @apply 2xl:container 2xl:mx-auto;
+  @apply xxxl:container xxxl:mx-auto;
 }
 
 .txt {
@@ -149,21 +149,21 @@
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #dad0cb;
+  background: #ecd6de;
   border: none;
   border-radius: 20px;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #e0a080;
+  background: #db7397;
   border-radius: 20px;
   cursor: pointer;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #d17d53;
+  background: #eb0f5d;
 }
 
 /* Hide number input spinner */
