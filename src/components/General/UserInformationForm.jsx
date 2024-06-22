@@ -140,12 +140,19 @@ export const UserInformationForm = ({
             className="text-gray-600 text-[15px] pb-1"
             error={userInfo.state.error}
           />
-          <StateSelect
+          {/* <StateSelect
             id="state"
             className="text-gray-600 text-sm pb-2 pt-2"
             dispatch={dispatch}
             isError={userInfo.state.error}
             value={userInfo.state.value}
+          /> */}
+          <Input
+            className="text-gray-600 text-sm pb-2 pt-2"
+            id="state"
+            dispatch={dispatch}
+            value={userInfo.state.value}
+            isError={userInfo.state.error}
           />
         </div>
         {/* City */}

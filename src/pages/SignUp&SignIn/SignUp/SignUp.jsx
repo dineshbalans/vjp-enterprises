@@ -20,8 +20,8 @@ const initialValue = {
   phNum: { value: "8610495955", error: "" },
 
   strtAddrss: { value: "SAP Theatre", error: "" },
-  cntry: { value: "", error: "" },
-  state: { value: "", error: "" },
+  cntry: { value: "India", error: "" },
+  state: { value: "Tamil Nadu", error: "" },
   city: { value: "Tiruppur", error: "" },
   zipCode: { value: "641603", error: "" },
 };
